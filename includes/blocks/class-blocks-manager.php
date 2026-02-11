@@ -2,7 +2,7 @@
 /**
  * Blocks Registration and Management
  *
- * Handles registration of Gutenberg blocks and shortcode compatibility.
+ * Handles registration of Gutenberg blocks.
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
@@ -62,7 +62,6 @@ class Blocks_Manager {
 	 */
 	private function init_hooks() {
 		add_action( 'init', array( $this, 'register_blocks' ) );
-		add_action( 'init', array( $this, 'register_shortcodes' ) );
 	}
 
 	/**
@@ -105,18 +104,6 @@ class Blocks_Manager {
 		);
 	}
 
-	/**
-	 * Register shortcodes for backward compatibility
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function register_shortcodes() {
-		add_shortcode( 'matchday-standings', array( $this, 'standings_shortcode' ) );
-		add_shortcode( 'matchday-match-schedule', array( $this, 'match_schedule_shortcode' ) );
-		add_shortcode( 'matchday-latest-matches', array( $this, 'latest_matches_shortcode' ) );
-		add_shortcode( 'matchday-future-matches', array( $this, 'future_matches_shortcode' ) );
-	}
 
 	/**
 	 * Render standings block
@@ -598,81 +585,6 @@ class Blocks_Manager {
 		return ob_get_clean();
 	}
 
-	/**
-	 * Standings shortcode (renders block)
-	 *
-	 * @since 1.0.0
-	 * @param array $atts Shortcode attributes.
-	 * @return string Shortcode HTML.
-	 */
-	public function standings_shortcode( $atts ) {
-		$atts = shortcode_atts(
-			array(
-				'group' => '',
-			),
-			$atts,
-			'matchday-standings'
-		);
-
-		return $this->render_standings_block( $atts );
-	}
-
-	/**
-	 * Match schedule shortcode (renders block)
-	 *
-	 * @since 1.0.0
-	 * @param array $atts Shortcode attributes.
-	 * @return string Shortcode HTML.
-	 */
-	public function match_schedule_shortcode( $atts ) {
-		$atts = shortcode_atts(
-			array(
-				'date' => '',
-			),
-			$atts,
-			'matchday-match-schedule'
-		);
-
-		return $this->render_match_schedule_block( $atts );
-	}
-
-	/**
-	 * Latest matches shortcode (renders block)
-	 *
-	 * @since 1.0.0
-	 * @param array $atts Shortcode attributes.
-	 * @return string Shortcode HTML.
-	 */
-	public function latest_matches_shortcode( $atts ) {
-		$atts = shortcode_atts(
-			array(
-				'limit' => 4,
-			),
-			$atts,
-			'matchday-latest-matches'
-		);
-
-		return $this->render_latest_matches_block( $atts );
-	}
-
-	/**
-	 * Future matches shortcode (renders block)
-	 *
-	 * @since 1.0.0
-	 * @param array $atts Shortcode attributes.
-	 * @return string Shortcode HTML.
-	 */
-	public function future_matches_shortcode( $atts ) {
-		$atts = shortcode_atts(
-			array(
-				'limit' => 4,
-			),
-			$atts,
-			'matchday-future-matches'
-		);
-
-		return $this->render_upcoming_matches_block( $atts );
-	}
 
 	/**
 	 * Get ordinal suffix for a number
