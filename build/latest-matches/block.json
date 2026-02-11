@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "matchday/latest-matches",
+  "version": "1.0.0",
+  "title": "Latest Matches",
+  "category": "widgets",
+  "icon": "backup",
+  "description": "Display recently completed matches from MeinTurnierplan.",
+  "keywords": [
+    "match",
+    "latest",
+    "recent",
+    "meinturnierplan"
+  ],
+  "textDomain": "matchday-blocks",
+  "attributes": {
+    "limit": {
+      "type": "number",
+      "default": 4
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
+  },
+  "editorScript": "file:./index.js"
+}

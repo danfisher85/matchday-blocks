@@ -25,6 +25,7 @@ define('MATCHDAY_BLOCKS_PLUGIN_URL', plugin_dir_url(__FILE__));
  */
 require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/admin/class-settings.php';
 require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/api/class-tournament-data.php';
+require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/blocks/class-blocks-manager.php';
 
 /**
  * Initialize plugin
@@ -37,5 +38,8 @@ function matchday_blocks_init() {
 
 	// Initialize API handler
 	\Matchday_Blocks\API\Tournament_Data::get_instance();
+
+	// Initialize blocks
+	\Matchday_Blocks\Blocks\Blocks_Manager::get_instance();
 }
 add_action('plugins_loaded', 'matchday_blocks_init');

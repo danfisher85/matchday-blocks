@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "matchday/match-schedule",
+	"version": "1.0.0",
+	"title": "Match Schedule",
+	"category": "widgets",
+	"icon": "calendar-alt",
+	"description": "Display complete match schedule from MeinTurnierplan.",
+	"keywords": ["match", "schedule", "calendar", "meinturnierplan"],
+	"textDomain": "matchday-blocks",
+	"attributes": {
+		"date": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["wide", "full"]
+	},
+	"editorScript": "file:./index.js"
+}
