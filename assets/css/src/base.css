@@ -1,0 +1,28 @@
+/**
+ * Minimal base styles for blocks
+ * Only essential resets needed for block components
+ */
+
+/* Box sizing */
+.matchday-standings *,
+.matchday-standings *::before,
+.matchday-standings *::after,
+.matchday-match-schedule *,
+.matchday-match-schedule *::before,
+.matchday-match-schedule *::after,
+.matchday-latest-matches *,
+.matchday-latest-matches *::before,
+.matchday-latest-matches *::after,
+.matchday-future-matches *,
+.matchday-future-matches *::before,
+.matchday-future-matches *::after {
+	box-sizing: border-box;
+}
+
+/* Reset margins for block containers */
+.matchday-standings,
+.matchday-match-schedule,
+.matchday-latest-matches,
+.matchday-future-matches {
+	margin: 0;
+}

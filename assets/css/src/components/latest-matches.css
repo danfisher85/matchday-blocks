@@ -1,0 +1,42 @@
+/* Latest Matches */
+.matchday-latest-matches {
+  @apply grid gap-5 sm:grid-cols-2 md:grid-cols-4;
+}
+
+.matchday-match-card {
+  @apply border-base-3 text-small overflow-hidden rounded-3xl border border-solid p-1.5;
+}
+.matchday-match-card__content {
+  @apply grid gap-5 p-4 lg:p-6;
+}
+.matchday-match-card__team {
+  @apply flex items-center justify-between;
+}
+.matchday-match-card__team-info {
+  @apply flex items-center gap-2;
+}
+.matchday-match-card__team-info p {
+  @apply empty:hidden;
+}
+.matchday-match-card__logo {
+  @apply h-8 w-8 object-contain object-center;
+}
+.matchday-match-card__team-name {
+  @apply font-bold;
+}
+.matchday-match-card__score {
+  @apply font-bold;
+}
+.matchday-match-card__vs {
+  @apply text-x-small before:bg-base-3 after:bg-base-3 grid grid-cols-[2rem_min-content_auto] items-center gap-2 font-bold uppercase before:h-px after:h-px;
+}
+
+.matchday-match-card__footer {
+  @apply bg-base-2 text-x-small grid grid-cols-12 gap-2 rounded-b-[1.125rem] rounded-t-md px-4 py-2 font-bold lg:px-6 lg:py-4;
+}
+.matchday-match-card__tournament {
+  @apply col-span-8;
+}
+.matchday-match-card__time {
+  @apply col-span-4 text-end;
+}

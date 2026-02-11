@@ -1,0 +1,9 @@
+@import "./theme.css";
+@import "tailwindcss";
+@import "./base.css";
+
+/* Block Components */
+@import "./components/standings.css";
+@import "./components/match-schedule.css";
+@import "./components/latest-matches.css";
+@import "./components/future-matches.css";

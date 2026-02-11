@@ -1,0 +1,53 @@
+/**
+ * Plugin Theme Configuration
+ *
+ * Defines CSS custom properties that match WordPress theme.json values
+ * from the Matchday theme for standalone plugin functionality.
+ */
+
+@theme {
+	/* Disable Tailwind's base reset styles */
+	--preset: none;
+
+	/* Colors from theme.json */
+	--color-base: #ffffff;
+	--color-base-2: #F3F5F8;
+	--color-base-3: #C7CDD6;
+	--color-contrast: #1F2937;
+	--color-contrast-2: #0B1F33;
+	--color-accent: #00A6E2;
+	--color-accent-2: #5BC4EE;
+	--color-accent-3: #007FB0;
+	--color-accent-4: #0F3E7A;
+	--color-accent-5: #4F74A6;
+	--color-accent-6: #00E0C6;
+	--color-info: #2FB4E9;
+	--color-success: #18B37A;
+	--color-warning: #F4B740;
+	--color-danger: #E04F5F;
+
+	/* Font sizes from theme.json */
+	--text-x-small: 0.75rem;
+	--text-x-small--line-height: 1.667em;
+	--text-small: 0.875rem;
+	--text-small--line-height: 1.715em;
+	--text-medium: 1rem;
+	--text-medium--line-height: 1.5em;
+	--text-medium-large: 1.125rem;
+	--text-medium-large-plus: 1.25rem;
+	--text-large: 1.5rem;
+	--text-x-large: 2rem;
+	--text-xx-large: 2.25rem;
+	--text-xxx-large: 3rem;
+	--text-gigantic: 4rem;
+
+	/* Spacing */
+	--spacing: 0.25rem;
+
+	/* Border radius */
+	--radius-md: 0.375rem;
+	--radius-lg: 0.5rem;
+	--radius-xl: 0.75rem;
+	--radius-2xl: 1rem;
+	--radius-3xl: 1.5rem;
+}

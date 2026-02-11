@@ -1,0 +1,47 @@
+/* Future Matches */
+.matchday-future-matches {
+	@apply grid gap-5 lg:grid-cols-2;
+}
+
+.matchday-future-match-card {
+	@apply overflow-hidden rounded-3xl border border-solid border-base-3 p-1.5 text-small;
+}
+
+.matchday-future-match-card__header {
+	@apply -mx-1.5 flex flex-wrap items-center justify-center gap-4 border border-x-0 border-t-0 border-solid border-base-3 py-2 text-x-small font-bold;
+}
+.matchday-future-match-card__group {
+	@apply font-normal md:before:me-4 md:before:opacity-30 md:before:content-['•'];
+}
+
+.matchday-future-match-card__content {
+	@apply flex gap-4 px-4 py-6 md:gap-8 lg:px-6 lg:py-7;
+}
+.matchday-future-match-card__teams {
+	@apply grid w-full grid-cols-[1fr_28px_1fr] gap-5 sm:grid-cols-[1fr_60px_1fr];
+}
+.matchday-future-match-card__team {
+	@apply flex flex-col items-center gap-3 text-center sm:flex-row sm:gap-4 sm:text-start first:sm:flex-row-reverse first:sm:text-end;
+}
+.matchday-future-match-card__team p {
+	@apply empty:hidden;
+}
+.matchday-future-match-card__logo {
+	@apply h-6 w-6 object-contain object-center sm:h-10 sm:w-10 md:h-14 md:w-14;
+}
+.matchday-future-match-card__team-name {
+	@apply text-small/none font-extrabold tracking-tight sm:text-medium/none md:text-medium-large/none;
+}
+.matchday-future-match-card__vs {
+	@apply flex items-center justify-center text-medium/none tracking-tight uppercase sm:text-medium-large/none;
+}
+
+.matchday-future-match-card__footer {
+	@apply grid grid-cols-12 gap-2 rounded-t-md rounded-b-[1.125rem] bg-base-2 px-4 py-2 text-x-small font-bold lg:px-6 lg:py-4;
+}
+.matchday-future-match-card__date {
+	@apply col-span-8 text-start;
+}
+.matchday-future-match-card__time {
+	@apply col-span-4 text-end;
+}

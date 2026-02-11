@@ -1,0 +1,53 @@
+/* Match Schedule */
+.matchday-match-schedule {
+  @apply grid gap-[1.875rem] lg:grid-cols-2;
+}
+
+/* Group */
+.matchday-match-schedule__date {
+  @apply border-base-3 overflow-hidden rounded-3xl border border-solid;
+}
+.matchday-match-schedule__date-heading {
+  @apply my-0 px-6 py-6 text-lg font-extrabold;
+}
+
+.matchday-match-schedule__table-wrapper {
+  @apply overflow-x-auto;
+}
+.matchday-match-schedule__date table {
+  @apply text-small w-full border-collapse border-spacing-0;
+}
+.matchday-match-schedule__date table thead th {
+  @apply border-y-base-3 bg-base-2 text-x-small border border-x-0 border-solid px-3 py-3 text-center font-bold uppercase first:ps-6 last:pe-6;
+}
+.matchday-match-schedule__date table thead th.matchday-table__pos {
+  @apply pe-0 text-left;
+}
+.matchday-match-schedule__date table thead th.matchday-table__participant {
+  @apply text-left;
+}
+.matchday-match-schedule__date table tbody td {
+  @apply border-base-3 border-x-0 border-y border-solid px-3 py-3 text-center first:ps-6 last:pe-6;
+}
+.matchday-match-schedule__date table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.matchday-match-schedule__date table tbody td.matchday-table__pos {
+  @apply pe-0 text-left font-bold;
+}
+.matchday-match-schedule__date table tbody td.matchday-table__participant {
+  @apply text-left font-bold;
+}
+.matchday-table__participant-inner {
+  @apply flex items-center gap-2 whitespace-nowrap;
+}
+.matchday-table__participant-inner img {
+  @apply h-6 w-6 shrink-0 object-contain object-center;
+}
+.matchday-match-schedule__date table tbody td.matchday-table__pts {
+  @apply font-bold;
+}
+.matchday-table__participant--team1 .matchday-table__participant-inner {
+  @apply flex-row-reverse;
+}

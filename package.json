@@ -1,9 +1,20 @@
 {
+	"type": "module",
 	"devDependencies": {
-		"@wordpress/scripts": "^31.4.0"
+		"@tailwindcss/postcss": "^4.1.3",
+		"@wordpress/scripts": "^31.4.0",
+		"npm-run-all": "^4.1.5",
+		"postcss": "^8.4.49",
+		"postcss-cli": "^11.0.1",
+		"postcss-nesting": "^13.0.1",
+		"tailwindcss": "^4.1.3"
 	},
 	"scripts": {
-		"build": "wp-scripts build",
-		"start": "wp-scripts start"
+		"build": "npm-run-all build:blocks build:css",
+		"build:blocks": "wp-scripts build",
+		"build:css": "postcss assets/css/src/main.css -o assets/css/blocks.css && node node_scripts/remove-base-layer.js",
+		"start": "npm-run-all --parallel start:blocks start:css",
+		"start:blocks": "wp-scripts start",
+		"start:css": "postcss assets/css/src/main.css -o assets/css/blocks.css --watch"
 	}
 }
