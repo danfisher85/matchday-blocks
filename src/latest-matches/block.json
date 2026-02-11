@@ -8,7 +8,6 @@
 	"icon": "backup",
 	"description": "Display recently completed matches from MeinTurnierplan.",
 	"keywords": ["match", "latest", "recent", "meinturnierplan"],
-	"textDomain": "matchday-blocks",
 	"attributes": {
 		"limit": {
 			"type": "number",

@@ -13,7 +13,6 @@
     "future",
     "meinturnierplan"
   ],
-  "textDomain": "matchday-blocks",
   "attributes": {
     "limit": {
       "type": "number",

@@ -8,7 +8,6 @@
 	"icon": "list-view",
 	"description": "Display tournament standings table from MeinTurnierplan.",
 	"keywords": ["tournament", "standings", "table", "meinturnierplan"],
-	"textDomain": "matchday-blocks",
 	"attributes": {
 		"group": {
 			"type": "string",

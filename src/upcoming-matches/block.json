@@ -8,7 +8,6 @@
 	"icon": "calendar",
 	"description": "Display upcoming scheduled matches from MeinTurnierplan.",
 	"keywords": ["match", "upcoming", "future", "meinturnierplan"],
-	"textDomain": "matchday-blocks",
 	"attributes": {
 		"limit": {
 			"type": "number",
