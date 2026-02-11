@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","mappings":";;;;AAAA,MAAMA,OAAO,GAAG,4HAA4H;AAC5IC,KAAK,CAACD,OAAO,CAAC,C","sources":["webpack:///./src/index.js"],"sourcesContent":["const message = \"This is the entry point for the Matchday Blocks plugin. It registers the blocks and enqueues necessary scripts and styles.\";\nalert(message);\n"],"names":["message","alert"],"sourceRoot":""}

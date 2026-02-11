@@ -1,0 +1,25 @@
+/**
+ * Admin styles for Matchday Blocks settings page
+ *
+ * @package   Matchday_Blocks
+ * @since     1.0.0
+ */
+
+/* Tournament Status Card */
+.matchday-blocks-status-card {
+	margin-top: 20px;
+}
+
+/* Status Messages */
+.matchday-blocks-status-success {
+	color: #46b450;
+}
+
+.matchday-blocks-status-warning {
+	color: #f56e28;
+}
+
+.matchday-blocks-status-success::before,
+.matchday-blocks-status-warning::before {
+	margin-right: 4px;
+}
