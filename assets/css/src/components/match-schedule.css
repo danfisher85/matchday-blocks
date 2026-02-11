@@ -1,6 +1,6 @@
 /* Match Schedule */
 .matchday-match-schedule {
-  @apply grid gap-[1.875rem] lg:grid-cols-2;
+  @apply grid gap-7.5 lg:grid-cols-2;
 }
 
 /* Group */

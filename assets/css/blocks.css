@@ -313,7 +313,7 @@
 }
 .matchday-match-schedule {
   display: grid;
-  gap: 1.875rem;
+  gap: calc(var(--spacing) * 7.5);
 }
 @media (width >= 64rem) {
   .matchday-match-schedule {
