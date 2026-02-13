@@ -295,7 +295,7 @@ class Blocks_Manager {
 			return ob_get_clean();
 		}
 
-		if ( empty( $tournament_data['teams'] ) || empty( $tournament_data['groupMatches'] ) || empty( $tournament_data['groups'] ) ) {
+		if ( empty( $tournament_data['teams'] ) ) {
 			echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
 			return ob_get_clean();
 		}
@@ -306,103 +306,175 @@ class Blocks_Manager {
 		}
 
 		$groups = array();
-		foreach ( $tournament_data['groups'] as $index => $group ) {
-			$groups[ $index ] = $group['displayId'];
+		if ( ! empty( $tournament_data['groups'] ) ) {
+			foreach ( $tournament_data['groups'] as $index => $group ) {
+				$groups[ $index ] = $group['displayId'];
+			}
 		}
 
-		$matches_by_date = array();
-		foreach ( $tournament_data['groupMatches'] as $match ) {
-			$date_time = $match['dateAndTime'];
-			$match_date = substr( $date_time, 0, 10 );
+		// Process group matches (Preliminary Round).
+		$group_matches_by_date = array();
+		if ( ! empty( $tournament_data['groupMatches'] ) ) {
+			foreach ( $tournament_data['groupMatches'] as $match ) {
+				$date_time = $match['dateAndTime'];
+				$match_date = substr( $date_time, 0, 10 );
 
-			if ( ! empty( $date ) && $match_date !== $date ) {
-				continue;
-			}
-
-			if ( ! isset( $matches_by_date[ $match_date ] ) ) {
-				$matches_by_date[ $match_date ] = array();
-			}
-
-			$matches_by_date[ $match_date ][] = $match;
-		}
-
-		ksort( $matches_by_date );
-
-		echo '<div class="matchday-match-schedule">';
-
-		foreach ( $matches_by_date as $match_date => $matches ) {
-			$date_obj = \DateTime::createFromFormat( 'Y-m-d', $match_date );
-			$date_heading = $date_obj ? $date_obj->format( 'l, F j, Y' ) : $match_date;
-
-			echo '<div class="matchday-match-schedule__date">';
-			echo '<h3 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h3>';
-			echo '<div class="matchday-match-schedule__table-wrapper">';
-			echo '<table><thead><tr>';
-			echo '<th>№</th><th>Start</th><th>Gr</th><th colspan="3">Match</th><th>Result</th>';
-			echo '</tr></thead><tbody>';
-
-			foreach ( $matches as $match ) {
-				$time         = substr( $match['dateAndTime'], 11, 5 );
-				$match_number = $match['displayId'];
-				$group_id     = $match['groupId'];
-				$group_name   = isset( $groups[ $group_id ] ) ? $groups[ $group_id ] : '';
-				$team1_id     = $match['team1Id'];
-				$team2_id     = $match['team2Id'];
-				$score1       = isset( $match['score1'] ) ? $match['score1'] : '';
-				$score2       = isset( $match['score2'] ) ? $match['score2'] : '';
-
-				$team1 = isset( $teams[ $team1_id ] ) ? $teams[ $team1_id ] : null;
-				$team2 = isset( $teams[ $team2_id ] ) ? $teams[ $team2_id ] : null;
-
-				if ( ! $team1 || ! $team2 ) {
+				if ( ! empty( $date ) && $match_date !== $date ) {
 					continue;
 				}
 
-				$team1_name = $team1['name'];
-				$team2_name = $team2['name'];
-				$team1_logo = isset( $team1['logo']['lx32w'] ) ? $team1['logo']['lx32w'] : '';
-				$team2_logo = isset( $team2['logo']['lx32w'] ) ? $team2['logo']['lx32w'] : '';
+				if ( ! isset( $group_matches_by_date[ $match_date ] ) ) {
+					$group_matches_by_date[ $match_date ] = array();
+				}
 
-				$has_result = ! empty( $score1 ) || ! empty( $score2 ) || $score1 === '0' || $score2 === '0';
+				$match['_stage'] = 'group';
+				$group_matches_by_date[ $match_date ][] = $match;
+			}
+		}
 
-				echo '<tr>';
-				echo '<td>' . esc_html( $match_number ) . '</td>';
-				echo '<td>' . esc_html( $time ) . '</td>';
-				echo '<td>';
-				if ( ! empty( $group_name ) ) {
-					echo '<span class="matchday-group-badge">' . esc_html( $group_name ) . '</span>';
+		// Process final matches (Final Round).
+		$final_matches_by_date = array();
+		if ( ! empty( $tournament_data['finalMatches'] ) ) {
+			foreach ( $tournament_data['finalMatches'] as $match ) {
+				// Skip matches without teams assigned yet.
+				if ( ! isset( $match['team1Id'] ) || ! isset( $match['team2Id'] ) ) {
+					continue;
 				}
-				echo '</td>';
-				echo '<td class="matchday-table__participant matchday-table__participant--team1">';
-				echo '<div class="matchday-table__participant-inner">';
-				if ( ! empty( $team1_logo ) ) {
-					echo '<img src="' . esc_url( $team1_logo ) . '" alt="' . esc_attr( $team1_name ) . '" width="24" height="24"> ';
+
+				$date_time = $match['dateAndTime'];
+				$match_date = substr( $date_time, 0, 10 );
+
+				if ( ! empty( $date ) && $match_date !== $date ) {
+					continue;
 				}
-				echo esc_html( $team1_name );
-				echo '</div></td>';
-				echo '<td class="matchday-match-vs">:</td>';
-				echo '<td class="matchday-table__participant matchday-table__participant--team2">';
-				echo '<div class="matchday-table__participant-inner">';
-				if ( ! empty( $team2_logo ) ) {
-					echo '<img src="' . esc_url( $team2_logo ) . '" alt="' . esc_attr( $team2_name ) . '" width="24" height="24"> ';
+
+				if ( ! isset( $final_matches_by_date[ $match_date ] ) ) {
+					$final_matches_by_date[ $match_date ] = array();
 				}
-				echo esc_html( $team2_name );
-				echo '</div></td>';
-				echo '<td class="matchday-match-final-score">';
-				if ( $has_result ) {
-					echo esc_html( $score1 ) . ':' . esc_html( $score2 );
-				} else {
-					echo '-:-';
-				}
-				echo '</td></tr>';
+
+				$match['_stage'] = 'final';
+				$final_matches_by_date[ $match_date ][] = $match;
+			}
+		}
+
+		ksort( $group_matches_by_date );
+		ksort( $final_matches_by_date );
+
+		echo '<div class="matchday-match-schedule">';
+
+		// Display Preliminary Round (Group Matches).
+		if ( ! empty( $group_matches_by_date ) ) {
+			echo '<div class="matchday-match-schedule__stage">';
+			echo '<h3 class="matchday-match-schedule__stage-heading">' . esc_html__( 'Preliminary Round', 'matchday-blocks' ) . '</h3>';
+
+			foreach ( $group_matches_by_date as $match_date => $matches ) {
+				$this->render_match_schedule_table( $matches, $match_date, $teams, $groups );
 			}
 
-			echo '</tbody></table></div></div>';
+			echo '</div>';
+		}
+
+		// Display Final Round (Knockout Matches).
+		if ( ! empty( $final_matches_by_date ) ) {
+			echo '<div class="matchday-match-schedule__stage">';
+			echo '<h3 class="matchday-match-schedule__stage-heading">' . esc_html__( 'Final Round', 'matchday-blocks' ) . '</h3>';
+
+			foreach ( $final_matches_by_date as $match_date => $matches ) {
+				$this->render_match_schedule_table( $matches, $match_date, $teams, $groups );
+			}
+
+			echo '</div>';
 		}
 
 		echo '</div>';
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render match schedule table for a specific date
+	 *
+	 * @since 1.0.0
+	 * @param array  $matches    Matches for the date.
+	 * @param string $match_date Date of the matches.
+	 * @param array  $teams      Teams data.
+	 * @param array  $groups     Groups data.
+	 * @return void
+	 */
+	private function render_match_schedule_table( $matches, $match_date, $teams, $groups ) {
+		$date_obj = \DateTime::createFromFormat( 'Y-m-d', $match_date );
+		$date_heading = $date_obj ? $date_obj->format( 'l, F j, Y' ) : $match_date;
+
+		echo '<div class="matchday-match-schedule__date">';
+		echo '<h4 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h4>';
+		echo '<div class="matchday-match-schedule__table-wrapper">';
+		echo '<table><thead><tr>';
+		echo '<th>№</th><th>Start</th><th>Gr</th><th colspan="3">Match</th><th>Result</th>';
+		echo '</tr></thead><tbody>';
+
+		foreach ( $matches as $match ) {
+			$time         = substr( $match['dateAndTime'], 11, 5 );
+			$match_number = $match['displayId'];
+			$stage        = isset( $match['_stage'] ) ? $match['_stage'] : 'group';
+			$group_name   = '';
+
+			if ( $stage === 'group' && isset( $match['groupId'] ) ) {
+				$group_id = $match['groupId'];
+				$group_name = isset( $groups[ $group_id ] ) ? $groups[ $group_id ] : '';
+			}
+
+			$team1_id = $match['team1Id'];
+			$team2_id = $match['team2Id'];
+			$score1   = isset( $match['score1'] ) ? $match['score1'] : '';
+			$score2   = isset( $match['score2'] ) ? $match['score2'] : '';
+
+			$team1 = isset( $teams[ $team1_id ] ) ? $teams[ $team1_id ] : null;
+			$team2 = isset( $teams[ $team2_id ] ) ? $teams[ $team2_id ] : null;
+
+			if ( ! $team1 || ! $team2 ) {
+				continue;
+			}
+
+			$team1_name = $team1['name'];
+			$team2_name = $team2['name'];
+			$team1_logo = isset( $team1['logo']['lx32w'] ) ? $team1['logo']['lx32w'] : '';
+			$team2_logo = isset( $team2['logo']['lx32w'] ) ? $team2['logo']['lx32w'] : '';
+
+			$has_result = ! empty( $score1 ) || ! empty( $score2 ) || $score1 === '0' || $score2 === '0';
+
+			echo '<tr>';
+			echo '<td>' . esc_html( $match_number ) . '</td>';
+			echo '<td>' . esc_html( $time ) . '</td>';
+			echo '<td>';
+			if ( ! empty( $group_name ) ) {
+				echo '<span class="matchday-group-badge">' . esc_html( $group_name ) . '</span>';
+			}
+			echo '</td>';
+			echo '<td class="matchday-table__participant matchday-table__participant--team1">';
+			echo '<div class="matchday-table__participant-inner">';
+			if ( ! empty( $team1_logo ) ) {
+				echo '<img src="' . esc_url( $team1_logo ) . '" alt="' . esc_attr( $team1_name ) . '" width="24" height="24"> ';
+			}
+			echo esc_html( $team1_name );
+			echo '</div></td>';
+			echo '<td class="matchday-match-vs">:</td>';
+			echo '<td class="matchday-table__participant matchday-table__participant--team2">';
+			echo '<div class="matchday-table__participant-inner">';
+			if ( ! empty( $team2_logo ) ) {
+				echo '<img src="' . esc_url( $team2_logo ) . '" alt="' . esc_attr( $team2_name ) . '" width="24" height="24"> ';
+			}
+			echo esc_html( $team2_name );
+			echo '</div></td>';
+			echo '<td class="matchday-match-final-score">';
+			if ( $has_result ) {
+				echo esc_html( $score1 ) . ':' . esc_html( $score2 );
+			} else {
+				echo '-:-';
+			}
+			echo '</td></tr>';
+		}
+
+		echo '</tbody></table></div></div>';
 	}
 
 	/**
