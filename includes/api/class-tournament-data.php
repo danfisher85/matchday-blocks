@@ -43,20 +43,20 @@ class Tournament_Data {
 	const OPTION_TOURNAMENT_ID = 'matchday_blocks_tournament_id';
 
 	/**
+	 * Option key for cache time
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const OPTION_CACHE_TIME = 'matchday_blocks_cache_time';
+
+	/**
 	 * API base URL
 	 *
 	 * @since 1.0.0
 	 * @var string
 	 */
 	const API_BASE_URL = 'https://www.meinturnierplan.de/json/json.php';
-
-	/**
-	 * Cache expiration time (in seconds)
-	 *
-	 * @since 1.0.0
-	 * @var int
-	 */
-	const CACHE_EXPIRATION = HOUR_IN_SECONDS;
 
 	/**
 	 * API request timeout (in seconds)
@@ -236,7 +236,9 @@ class Tournament_Data {
 	 * @return bool True if cached successfully.
 	 */
 	private function set_cached_data( $data ) {
-		return set_transient( self::TRANSIENT_KEY, $data, self::CACHE_EXPIRATION );
+		$cache_time_hours = $this->get_cache_time();
+		$cache_expiration = $cache_time_hours * HOUR_IN_SECONDS;
+		return set_transient( self::TRANSIENT_KEY, $data, $cache_expiration );
 	}
 
 	/**
@@ -267,6 +269,16 @@ class Tournament_Data {
 	 */
 	private function get_tournament_id() {
 		return get_option( self::OPTION_TOURNAMENT_ID, '' );
+	}
+
+	/**
+	 * Get cache time from options
+	 *
+	 * @since 1.0.0
+	 * @return int Cache time in hours.
+	 */
+	private function get_cache_time() {
+		return absint( get_option( self::OPTION_CACHE_TIME, 1 ) );
 	}
 
 	/**
