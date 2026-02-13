@@ -269,9 +269,154 @@ class Blocks_Manager {
 			echo '</div>';
 		}
 
+		// Display final standings if available.
+		if ( ! empty( $tournament_data['finalMatches'] ) && ! empty( $tournament_data['finalRankTable'] ) ) {
+			$final_standings = $this->calculate_final_standings( $tournament_data['finalMatches'], $teams );
+			
+			if ( ! empty( $final_standings ) ) {
+				echo '<div class="matchday-standings__group">';
+				echo '<h3 class="matchday-standings__group-heading">' . esc_html__( 'Final Standings', 'matchday-blocks' ) . '</h3>';
+				echo '<div class="matchday-standings__table-wrapper">';
+				echo '<table>';
+				echo '<thead>';
+				echo '<tr>';
+				echo '<th class="matchday-table__pos">Pl</th>';
+				echo '<th class="matchday-table__participant">Participants</th>';
+				echo '</tr>';
+				echo '</thead>';
+				echo '<tbody>';
+
+				foreach ( $final_standings as $rank => $team_id ) {
+					if ( null === $team_id ) {
+						// Position not determined yet.
+						$rank_display = $this->get_ordinal_suffix( $rank );
+						echo '<tr>';
+						echo '<td class="matchday-table__pos">' . esc_html( $rank_display ) . '</td>';
+						echo '<td class="matchday-table__participant">–</td>';
+						echo '</tr>';
+					} else {
+						if ( ! isset( $teams[ $team_id ] ) ) {
+							continue;
+						}
+
+						$team      = $teams[ $team_id ];
+						$team_name = $team['name'];
+						$team_logo = isset( $team['logo']['lx32w'] ) ? $team['logo']['lx32w'] : '';
+						$rank_display = $this->get_ordinal_suffix( $rank );
+
+						echo '<tr>';
+						echo '<td class="matchday-table__pos">' . esc_html( $rank_display ) . '</td>';
+						echo '<td class="matchday-table__participant">';
+						echo '<div class="matchday-table__participant-inner">';
+						if ( ! empty( $team_logo ) ) {
+							echo '<img src="' . esc_url( $team_logo ) . '" alt="' . esc_attr( $team_name ) . '" width="24" height="24"> ';
+						}
+						echo esc_html( $team_name );
+						echo '</div>';
+						echo '</td>';
+						echo '</tr>';
+					}
+				}
+
+				echo '</tbody>';
+				echo '</table>';
+				echo '</div>';
+				echo '</div>';
+			}
+		}
+
 		echo '</div>';
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Calculate final standings from final matches
+	 *
+	 * @since 1.0.0
+	 * @param array $final_matches Final matches data.
+	 * @param array $teams         Teams data.
+	 * @return array Final standings array with rank => team_id.
+	 */
+	private function calculate_final_standings( $final_matches, $teams ) {
+		$standings = array();
+
+		// Initialize standings positions (1-8).
+		for ( $i = 1; $i <= 8; $i++ ) {
+			$standings[ $i ] = null;
+		}
+
+		// Process each final match.
+		foreach ( $final_matches as $match ) {
+			// Skip matches without results or teams.
+			if ( ! isset( $match['team1Id'] ) || ! isset( $match['team2Id'] ) ) {
+				continue;
+			}
+
+			$score1 = isset( $match['score1'] ) ? $match['score1'] : '';
+			$score2 = isset( $match['score2'] ) ? $match['score2'] : '';
+
+			// Skip if no score is set.
+			if ( '' === $score1 || '' === $score2 ) {
+				continue;
+			}
+
+			$team1_id = $match['team1Id'];
+			$team2_id = $match['team2Id'];
+
+			// Convert scores to integers for comparison.
+			$score1_int = intval( $score1 );
+			$score2_int = intval( $score2 );
+
+			// Determine winner and loser.
+			$winner_id = null;
+			$loser_id  = null;
+
+			if ( $score1_int > $score2_int ) {
+				$winner_id = $team1_id;
+				$loser_id  = $team2_id;
+			} elseif ( $score2_int > $score1_int ) {
+				$winner_id = $team2_id;
+				$loser_id  = $team1_id;
+			}
+
+			// Get modeMapping to determine which placement match this is.
+			if ( isset( $match['modeMapping'] ) ) {
+				$round = $match['modeMapping']['round'];
+				$match_num = $match['modeMapping']['match'];
+
+				// Round 1 matches determine final placements.
+				if ( 1 === $round ) {
+					if ( 1 === $match_num ) {
+						// Final: 1st vs 2nd place.
+						if ( $winner_id ) {
+							$standings[1] = $winner_id;
+							$standings[2] = $loser_id;
+						}
+					} elseif ( 2 === $match_num ) {
+						// Match for 3rd place: 3rd vs 4th place.
+						if ( $winner_id ) {
+							$standings[3] = $winner_id;
+							$standings[4] = $loser_id;
+						}
+					} elseif ( 3 === $match_num ) {
+						// Match for 5th place: 5th vs 6th place.
+						if ( $winner_id ) {
+							$standings[5] = $winner_id;
+							$standings[6] = $loser_id;
+						}
+					} elseif ( 4 === $match_num ) {
+						// Match for 7th place: 7th vs 8th place.
+						if ( $winner_id ) {
+							$standings[7] = $winner_id;
+							$standings[8] = $loser_id;
+						}
+					}
+				}
+			}
+		}
+
+		return $standings;
 	}
 
 	/**
