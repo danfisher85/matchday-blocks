@@ -272,7 +272,7 @@ class Blocks_Manager {
 		// Display final standings if available.
 		if ( ! empty( $tournament_data['finalMatches'] ) && ! empty( $tournament_data['finalRankTable'] ) ) {
 			$final_standings = $this->calculate_final_standings( $tournament_data['finalMatches'], $teams );
-			
+
 			if ( ! empty( $final_standings ) ) {
 				echo '<div class="matchday-standings__group">';
 				echo '<h3 class="matchday-standings__group-heading">' . esc_html__( 'Final Standings', 'matchday-blocks' ) . '</h3>';
