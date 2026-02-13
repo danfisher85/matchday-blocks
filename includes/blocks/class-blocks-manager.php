@@ -405,11 +405,21 @@ class Blocks_Manager {
 		$date_obj = \DateTime::createFromFormat( 'Y-m-d', $match_date );
 		$date_heading = $date_obj ? $date_obj->format( 'l, F j, Y' ) : $match_date;
 
+		// Detect if this is a final stage table by checking the first match.
+		$is_final_stage = false;
+		if ( ! empty( $matches ) && isset( $matches[0]['_stage'] ) && 'final' === $matches[0]['_stage'] ) {
+			$is_final_stage = true;
+		}
+
 		echo '<div class="matchday-match-schedule__date">';
 		echo '<h4 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h4>';
 		echo '<div class="matchday-match-schedule__table-wrapper">';
 		echo '<table><thead><tr>';
-		echo '<th>№</th><th>Start</th><th>Gr</th><th colspan="3">Match</th><th>Result</th>';
+		echo '<th>№</th><th>Start</th>';
+		if ( ! $is_final_stage ) {
+			echo '<th>Gr</th>';
+		}
+		echo '<th colspan="3">Match</th><th>Result</th>';
 		echo '</tr></thead><tbody>';
 
 		foreach ( $matches as $match ) {
@@ -442,15 +452,41 @@ class Blocks_Manager {
 
 			$has_result = ! empty( $score1 ) || ! empty( $score2 ) || $score1 === '0' || $score2 === '0';
 
+			// Get match title and source descriptions for final matches.
+			$match_title = '';
+			$team1_source = '';
+			$team2_source = '';
+			if ( $stage === 'final' && isset( $match['modeMapping'] ) ) {
+				$match_title = $this->get_final_match_title( $match['modeMapping'] );
+				if ( isset( $match['sourceTeam1'] ) ) {
+					$team1_source = $this->get_team_source_description( $match['sourceTeam1'], $groups );
+				}
+				if ( isset( $match['sourceTeam2'] ) ) {
+					$team2_source = $this->get_team_source_description( $match['sourceTeam2'], $groups );
+				}
+			}
+
+			// Display match title row for final matches.
+			if ( ! empty( $match_title ) ) {
+				echo '<tr class="matchday-match-title-row">';
+				echo '<td colspan="7" class="matchday-match-title">' . esc_html( $match_title ) . '</td>';
+				echo '</tr>';
+			}
+
 			echo '<tr>';
 			echo '<td>' . esc_html( $match_number ) . '</td>';
 			echo '<td>' . esc_html( $time ) . '</td>';
-			echo '<td>';
-			if ( ! empty( $group_name ) ) {
-				echo '<span class="matchday-group-badge">' . esc_html( $group_name ) . '</span>';
+			if ( ! $is_final_stage ) {
+				echo '<td>';
+				if ( ! empty( $group_name ) ) {
+					echo '<span class="matchday-group-badge">' . esc_html( $group_name ) . '</span>';
+				}
+				echo '</td>';
 			}
-			echo '</td>';
 			echo '<td class="matchday-table__participant matchday-table__participant--team1">';
+			if ( ! empty( $team1_source ) ) {
+				echo '<div class="matchday-table__participant-source">' . esc_html( $team1_source ) . '</div>';
+			}
 			echo '<div class="matchday-table__participant-inner">';
 			if ( ! empty( $team1_logo ) ) {
 				echo '<img src="' . esc_url( $team1_logo ) . '" alt="' . esc_attr( $team1_name ) . '" width="24" height="24"> ';
@@ -459,6 +495,9 @@ class Blocks_Manager {
 			echo '</div></td>';
 			echo '<td class="matchday-match-vs">:</td>';
 			echo '<td class="matchday-table__participant matchday-table__participant--team2">';
+			if ( ! empty( $team2_source ) ) {
+				echo '<div class="matchday-table__participant-source">' . esc_html( $team2_source ) . '</div>';
+			}
 			echo '<div class="matchday-table__participant-inner">';
 			if ( ! empty( $team2_logo ) ) {
 				echo '<img src="' . esc_url( $team2_logo ) . '" alt="' . esc_attr( $team2_name ) . '" width="24" height="24"> ';
@@ -475,6 +514,112 @@ class Blocks_Manager {
 		}
 
 		echo '</tbody></table></div></div>';
+	}
+
+	/**
+	 * Get final match title based on mode mapping
+	 *
+	 * @since 1.0.0
+	 * @param array $mode_mapping Mode mapping data.
+	 * @return string Match title.
+	 */
+	private function get_final_match_title( $mode_mapping ) {
+		if ( ! isset( $mode_mapping['round'] ) || ! isset( $mode_mapping['match'] ) ) {
+			return '';
+		}
+
+		$round = $mode_mapping['round'];
+		$match = $mode_mapping['match'];
+
+		// Determine match title based on round and match number.
+		if ( 1 === $round ) {
+			if ( 1 === $match ) {
+				return __( 'Final', 'matchday-blocks' );
+			} elseif ( 2 === $match ) {
+				return __( 'Match for 3rd Place', 'matchday-blocks' );
+			} elseif ( 3 === $match ) {
+				return __( 'Match for 5th Place', 'matchday-blocks' );
+			} elseif ( 4 === $match ) {
+				return __( 'Match for 7th Place', 'matchday-blocks' );
+			}
+		} elseif ( 2 === $round ) {
+			if ( 1 === $match ) {
+				return __( '1st Semifinal', 'matchday-blocks' );
+			} elseif ( 2 === $match ) {
+				return __( '2nd Semifinal', 'matchday-blocks' );
+			}
+		} elseif ( 3 === $round ) {
+			if ( 1 === $match ) {
+				return __( '1st Quarterfinal', 'matchday-blocks' );
+			} elseif ( 2 === $match ) {
+				return __( '2nd Quarterfinal', 'matchday-blocks' );
+			} elseif ( 3 === $match ) {
+				return __( '3rd Quarterfinal', 'matchday-blocks' );
+			} elseif ( 4 === $match ) {
+				return __( '4th Quarterfinal', 'matchday-blocks' );
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get team source description
+	 *
+	 * @since 1.0.0
+	 * @param array $source_team Source team data.
+	 * @param array $groups      Groups data.
+	 * @return string Source description.
+	 */
+	private function get_team_source_description( $source_team, $groups ) {
+		if ( ! isset( $source_team['type'] ) ) {
+			return '';
+		}
+
+		$type = $source_team['type'];
+
+		if ( 'group' === $type && isset( $source_team['group'] ) && isset( $source_team['rank'] ) ) {
+			$group_index = $source_team['group'];
+			$rank = $source_team['rank'];
+			$group_name = isset( $groups[ $group_index ] ) ? $groups[ $group_index ] : ( $group_index + 1 );
+
+			$rank_labels = array(
+				1 => __( '1st', 'matchday-blocks' ),
+				2 => __( '2nd', 'matchday-blocks' ),
+				3 => __( '3rd', 'matchday-blocks' ),
+				4 => __( '4th', 'matchday-blocks' ),
+			);
+
+			$rank_label = isset( $rank_labels[ $rank ] ) ? $rank_labels[ $rank ] : $rank . 'th';
+
+			/* translators: 1: rank label, 2: group name */
+			return sprintf( __( '%1$s Group %2$s', 'matchday-blocks' ), $rank_label, $group_name );
+		} elseif ( 'knockout' === $type && isset( $source_team['round'] ) && isset( $source_team['match'] ) && isset( $source_team['rank'] ) ) {
+			$round = $source_team['round'];
+			$match = $source_team['match'];
+			$rank = $source_team['rank'];
+
+			$match_name = '';
+			if ( 2 === $round ) {
+				$match_name = ( 1 === $match ) ? __( '1st Semifinal', 'matchday-blocks' ) : __( '2nd Semifinal', 'matchday-blocks' );
+			} elseif ( 3 === $round ) {
+				$quarterfinal_labels = array(
+					1 => __( '1st Quarterfinal', 'matchday-blocks' ),
+					2 => __( '2nd Quarterfinal', 'matchday-blocks' ),
+					3 => __( '3rd Quarterfinal', 'matchday-blocks' ),
+					4 => __( '4th Quarterfinal', 'matchday-blocks' ),
+				);
+				$match_name = isset( $quarterfinal_labels[ $match ] ) ? $quarterfinal_labels[ $match ] : '';
+			}
+
+			if ( ! empty( $match_name ) ) {
+				$position_label = ( 1 === $rank ) ? __( 'Winner', 'matchday-blocks' ) : __( 'Loser', 'matchday-blocks' );
+				/* translators: 1: position label (Winner/Loser), 2: match name */
+				return sprintf( __( '%1$s %2$s', 'matchday-blocks' ), $position_label, $match_name );
+			}
+		}
+
+		return '';
 	}
 
 	/**
