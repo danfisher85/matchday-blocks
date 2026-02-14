@@ -271,7 +271,7 @@ class Blocks_Manager {
 
 		// Display final standings if available.
 		if ( ! empty( $tournament_data['finalMatches'] ) && ! empty( $tournament_data['finalRankTable'] ) ) {
-			$final_standings = $this->calculate_final_standings( $tournament_data['finalMatches'], $teams );
+			$final_standings = $this->get_final_standings_from_rank_table( $tournament_data['finalRankTable'], $tournament_data['finalMatches'], $teams );
 
 			if ( ! empty( $final_standings ) ) {
 				echo '<div class="matchday-standings__group">';
@@ -287,35 +287,27 @@ class Blocks_Manager {
 				echo '<tbody>';
 
 				foreach ( $final_standings as $rank => $team_id ) {
-					if ( null === $team_id ) {
-						// Position not determined yet.
-						$rank_display = $this->get_ordinal_suffix( $rank );
-						echo '<tr>';
-						echo '<td class="matchday-table__pos">' . esc_html( $rank_display ) . '</td>';
-						echo '<td class="matchday-table__participant">–</td>';
-						echo '</tr>';
-					} else {
-						if ( ! isset( $teams[ $team_id ] ) ) {
-							continue;
-						}
-
-						$team      = $teams[ $team_id ];
-						$team_name = $team['name'];
-						$team_logo = isset( $team['logo']['lx32w'] ) ? $team['logo']['lx32w'] : '';
-						$rank_display = $this->get_ordinal_suffix( $rank );
-
-						echo '<tr>';
-						echo '<td class="matchday-table__pos">' . esc_html( $rank_display ) . '</td>';
-						echo '<td class="matchday-table__participant">';
-						echo '<div class="matchday-table__participant-inner">';
-						if ( ! empty( $team_logo ) ) {
-							echo '<img src="' . esc_url( $team_logo ) . '" alt="' . esc_attr( $team_name ) . '" width="24" height="24"> ';
-						}
-						echo esc_html( $team_name );
-						echo '</div>';
-						echo '</td>';
-						echo '</tr>';
+					// Skip if team doesn't exist in teams data.
+					if ( ! isset( $teams[ $team_id ] ) ) {
+						continue;
 					}
+
+					$team      = $teams[ $team_id ];
+					$team_name = $team['name'];
+					$team_logo = isset( $team['logo']['lx32w'] ) ? $team['logo']['lx32w'] : '';
+					$rank_display = $this->get_ordinal_suffix( $rank );
+
+					echo '<tr>';
+					echo '<td class="matchday-table__pos">' . esc_html( $rank_display ) . '</td>';
+					echo '<td class="matchday-table__participant">';
+					echo '<div class="matchday-table__participant-inner">';
+					if ( ! empty( $team_logo ) ) {
+						echo '<img src="' . esc_url( $team_logo ) . '" alt="' . esc_attr( $team_name ) . '" width="24" height="24"> ';
+					}
+					echo esc_html( $team_name );
+					echo '</div>';
+					echo '</td>';
+					echo '</tr>';
 				}
 
 				echo '</tbody>';
@@ -328,6 +320,35 @@ class Blocks_Manager {
 		echo '</div>';
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Get final standings from rank table
+	 *
+	 * @since 1.0.0
+	 * @param array $rank_table    Final rank table data.
+	 * @param array $final_matches Final matches data (unused, kept for compatibility).
+	 * @param array $teams         Teams data (unused, kept for compatibility).
+	 * @return array Final standings array with rank => team_id.
+	 */
+	private function get_final_standings_from_rank_table( $rank_table, $final_matches, $teams ) {
+		$standings = array();
+
+		// Process rank table entries directly from API.
+		if ( is_array( $rank_table ) ) {
+			foreach ( $rank_table as $entry ) {
+				if ( isset( $entry['rank'] ) && isset( $entry['teamId'] ) ) {
+					$rank = intval( $entry['rank'] );
+					$team_id = $entry['teamId'];
+					$standings[ $rank ] = $team_id;
+				}
+			}
+		}
+
+		// Sort by rank to ensure proper order.
+		ksort( $standings );
+
+		return $standings;
 	}
 
 	/**
