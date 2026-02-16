@@ -650,25 +650,33 @@ class Blocks_Manager {
 				echo '</td>';
 			}
 			echo '<td class="matchday-table__participant matchday-table__participant--team1">';
-			if ( ! empty( $team1_source ) ) {
-				echo '<div class="matchday-table__participant-source">' . esc_html( $team1_source ) . '</div>';
-			}
 			echo '<div class="matchday-table__participant-inner">';
 			if ( ! empty( $team1_logo ) ) {
 				echo '<img src="' . esc_url( $team1_logo ) . '" alt="' . esc_attr( $team1_name ) . '" width="24" height="24"> ';
 			}
+			echo '<div class="matchday-table__participant-info">';
+			echo '<div class="matchday-table__participant-name">';
 			echo esc_html( $team1_name );
+			echo '</div>';
+			if ( ! empty( $team1_source ) ) {
+				echo '<div class="matchday-table__participant-source">' . esc_html( $team1_source ) . '</div>';
+			}
+			echo '</div>';
 			echo '</div></td>';
 			echo '<td class="matchday-match-vs">:</td>';
 			echo '<td class="matchday-table__participant matchday-table__participant--team2">';
-			if ( ! empty( $team2_source ) ) {
-				echo '<div class="matchday-table__participant-source">' . esc_html( $team2_source ) . '</div>';
-			}
 			echo '<div class="matchday-table__participant-inner">';
 			if ( ! empty( $team2_logo ) ) {
 				echo '<img src="' . esc_url( $team2_logo ) . '" alt="' . esc_attr( $team2_name ) . '" width="24" height="24"> ';
 			}
+			echo '<div class="matchday-table__participant-info">';
+			echo '<div class="matchday-table__participant-name">';
 			echo esc_html( $team2_name );
+			echo '</div>';
+			if ( ! empty( $team2_source ) ) {
+				echo '<div class="matchday-table__participant-source">' . esc_html( $team2_source ) . '</div>';
+			}
+			echo '</div>';
 			echo '</div></td>';
 			echo '<td class="matchday-match-final-score">';
 			if ( $has_result ) {
