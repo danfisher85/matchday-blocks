@@ -45,7 +45,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 1</div>
 														</div>
@@ -54,7 +54,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 2</div>
 														</div>
@@ -70,7 +70,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 3</div>
 														</div>
@@ -79,7 +79,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 4</div>
 														</div>
@@ -95,7 +95,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 5</div>
 														</div>
@@ -104,7 +104,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 6</div>
 														</div>
@@ -120,7 +120,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 7</div>
 														</div>
@@ -129,7 +129,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 8</div>
 														</div>
@@ -145,7 +145,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 9</div>
 														</div>
@@ -154,7 +154,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 10</div>
 														</div>
@@ -170,7 +170,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 11</div>
 														</div>
@@ -179,7 +179,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 12</div>
 														</div>
@@ -195,7 +195,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 13</div>
 														</div>
@@ -204,7 +204,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 14</div>
 														</div>
@@ -220,7 +220,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 15</div>
 														</div>
@@ -229,7 +229,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 16</div>
 														</div>
@@ -245,7 +245,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 17</div>
 														</div>
@@ -254,7 +254,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 18</div>
 														</div>
@@ -270,7 +270,7 @@ registerBlockType('matchday/match-schedule', {
 												</td>
 												<td className="matchday-table__participant matchday-table__participant--team1">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 19</div>
 														</div>
@@ -279,7 +279,7 @@ registerBlockType('matchday/match-schedule', {
 												<td className="matchday-match-vs">:</td>
 												<td className="matchday-table__participant matchday-table__participant--team2">
 													<div className="matchday-table__participant-inner">
-														<div className="matchday-table__participant-logo" />
+														<div className="matchday-table__participant-logo-placeholder" />
 														<div className="matchday-table__participant-info">
 															<div className="matchday-table__participant-name">Team Name 20</div>
 														</div>
