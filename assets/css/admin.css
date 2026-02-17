@@ -50,3 +50,8 @@
 .matchday-blocks-status-warning::before {
 	margin-right: 4px;
 }
+
+/* Cache message spacing */
+#matchday-cache-message {
+	margin-left: 10px;
+}

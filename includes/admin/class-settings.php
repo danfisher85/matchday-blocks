@@ -432,7 +432,7 @@ class Settings {
 			<button type="button" id="matchday-clear-cache-btn" class="button button-secondary">
 				<?php esc_html_e( 'Clear Cache Now', 'matchday-blocks' ); ?>
 			</button>
-			<span id="matchday-cache-message" style="margin-left: 10px;"></span>
+			<span id="matchday-cache-message"></span>
 			<?php
 			echo '</p>';
 		} else {
