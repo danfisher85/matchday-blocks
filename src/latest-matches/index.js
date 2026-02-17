@@ -42,7 +42,7 @@ registerBlockType('matchday/latest-matches', {
 							</div>
 							<div className="matchday-match-card__footer">
 								<div className="matchday-match-card__tournament">Primary League</div>
-								<div className="matchday-match-card__time">12:36</div>
+								<div className="matchday-match-card__time">12:00</div>
 							</div>
 						</div>
 						<div className="matchday-match-card">
@@ -65,7 +65,7 @@ registerBlockType('matchday/latest-matches', {
 							</div>
 							<div className="matchday-match-card__footer">
 								<div className="matchday-match-card__tournament">Primary League</div>
-								<div className="matchday-match-card__time">04:54</div>
+								<div className="matchday-match-card__time">12:00</div>
 							</div>
 						</div>
 						<div className="matchday-match-card">
@@ -88,7 +88,7 @@ registerBlockType('matchday/latest-matches', {
 							</div>
 							<div className="matchday-match-card__footer">
 								<div className="matchday-match-card__tournament">Primary League</div>
-								<div className="matchday-match-card__time">04:12</div>
+								<div className="matchday-match-card__time">12:00</div>
 							</div>
 						</div>
 						<div className="matchday-match-card">
@@ -111,7 +111,7 @@ registerBlockType('matchday/latest-matches', {
 							</div>
 							<div className="matchday-match-card__footer">
 								<div className="matchday-match-card__tournament">Primary League</div>
-								<div className="matchday-match-card__time">02:48</div>
+								<div className="matchday-match-card__time">12:00</div>
 							</div>
 						</div>
 					</div>

@@ -181,7 +181,7 @@ __webpack_require__.r(__webpack_exports__);
                 children: "Primary League"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                 className: "matchday-match-card__time",
-                children: "12:36"
+                children: "12:00"
               })]
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
@@ -227,7 +227,7 @@ __webpack_require__.r(__webpack_exports__);
                 children: "Primary League"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                 className: "matchday-match-card__time",
-                children: "04:54"
+                children: "12:00"
               })]
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
@@ -273,7 +273,7 @@ __webpack_require__.r(__webpack_exports__);
                 children: "Primary League"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                 className: "matchday-match-card__time",
-                children: "04:12"
+                children: "12:00"
               })]
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
@@ -319,7 +319,7 @@ __webpack_require__.r(__webpack_exports__);
                 children: "Primary League"
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
                 className: "matchday-match-card__time",
-                children: "02:48"
+                children: "12:00"
               })]
             })]
           })]
