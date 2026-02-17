@@ -22,7 +22,7 @@ registerBlockType('matchday/match-schedule', {
 				<div {...blockProps}>
 					<div className="matchday-match-schedule">
 						<div className="matchday-match-schedule__stage">
-							<h3 className="matchday-match-schedule__stage-heading">Preliminary Round</h3>
+							<h3 className="matchday-match-schedule__stage-heading">First Round</h3>
 							<div className="matchday-match-schedule__date">
 								<h4 className="matchday-match-schedule__date-heading">Thursday, January 1, 2026</h4>
 								<div className="matchday-match-schedule__table-wrapper">
