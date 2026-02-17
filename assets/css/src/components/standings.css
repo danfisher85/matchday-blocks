@@ -1,47 +1,56 @@
 /* Standings */
 .matchday-standings {
-  @apply grid gap-[1.875rem] md:grid-cols-2;
+	@apply grid gap-[1.875rem] md:grid-cols-2;
 }
 
 /* Group */
 .matchday-standings__group {
-  @apply border-base-3 overflow-hidden rounded-3xl border border-solid;
+	@apply overflow-hidden rounded-3xl border border-solid border-base-3;
 }
 .matchday-standings__group-heading {
-  @apply my-0 px-6 py-6 text-lg font-extrabold;
+	@apply my-0 px-6 py-6 text-lg font-extrabold;
 }
 
 .matchday-standings__table-wrapper {
-  @apply overflow-x-auto;
+	@apply overflow-x-auto;
 }
 .matchday-standings__group table {
-  @apply text-small w-full border-collapse border-spacing-0;
+	@apply w-full border-collapse border-spacing-0 text-small;
 }
 .matchday-standings__group table thead th {
-  @apply border-y-base-3 bg-base-2 text-x-small border border-x-0 border-solid px-3 py-3 text-center font-bold uppercase first:ps-6 last:pe-6;
+	@apply border border-x-0 border-solid border-y-base-3 bg-base-2 px-3 py-3 text-center text-x-small font-bold uppercase first:ps-6 last:pe-6;
 }
 .matchday-standings__group table thead th.matchday-table__pos {
-  @apply pe-0 text-left;
+	@apply pe-0 text-left;
 }
 .matchday-standings__group table thead th.matchday-table__participant {
-  @apply text-left;
+	@apply text-left;
 }
 .matchday-standings__group table tbody td {
-  @apply border-base-3 border-x-0 border-y border-solid px-3 py-3 text-center first:ps-6 last:pe-6;
+	@apply border-x-0 border-y border-solid border-base-3 px-3 py-3 text-center first:ps-6 last:pe-6;
 }
 .matchday-standings__group table tbody tr:last-child td {
-  @apply border-b-0;
+	@apply border-b-0;
 }
 
 .matchday-standings__group table tbody td.matchday-table__pos {
-  @apply pe-0 text-left font-bold;
+	@apply pe-0 text-left font-bold;
 }
 .matchday-standings__group table tbody td.matchday-table__participant {
-  @apply text-left font-bold;
+	@apply text-left font-bold;
 }
 .matchday-table__participant-inner {
-  @apply flex items-center gap-2 whitespace-nowrap;
+	@apply flex items-center gap-2 whitespace-nowrap;
+}
+.matchday-table__participant-info {
+	@apply flex flex-col items-end;
+}
+.matchday-table__participant--team2 .matchday-table__participant-info {
+	@apply items-start;
+}
+.matchday-table__participant-source {
+	@apply text-xs font-normal;
 }
 .matchday-standings__group table tbody td.matchday-table__pts {
-  @apply font-bold;
+	@apply font-bold;
 }

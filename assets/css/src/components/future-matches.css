@@ -18,22 +18,25 @@
 	@apply flex gap-4 px-4 py-6 md:gap-8 lg:px-6 lg:py-7;
 }
 .matchday-future-match-card__teams {
-	@apply grid w-full grid-cols-[1fr_28px_1fr] gap-5 sm:grid-cols-[1fr_60px_1fr];
+	@apply grid w-full grid-cols-12 gap-5;
 }
 .matchday-future-match-card__team {
-	@apply flex flex-col items-center gap-3 text-center sm:flex-row sm:gap-4 sm:text-start first:sm:flex-row-reverse first:sm:text-end;
+	@apply col-span-5 flex flex-col items-center gap-3 text-center sm:flex-row sm:gap-4 sm:text-start first:sm:flex-row-reverse first:sm:text-end;
 }
 .matchday-future-match-card__team p {
 	@apply empty:hidden;
 }
 .matchday-future-match-card__logo {
-	@apply h-6 w-6 object-contain object-center sm:h-10 sm:w-10 md:h-14 md:w-14;
+	@apply h-6 w-6 shrink-0 object-contain object-center sm:h-10 sm:w-10 md:h-14 md:w-14;
 }
 .matchday-future-match-card__team-name {
-	@apply text-small/none font-extrabold tracking-tight sm:text-medium/none md:text-medium-large/none;
+	@apply w-full min-w-0 truncate text-small/tight font-extrabold tracking-tight sm:text-medium/tight md:text-medium-large/tight;
+}
+.matchday-future-match-card__team-logo-placeholder {
+	@apply h-6 w-6 shrink-0 rounded-full bg-base-3 sm:h-10 sm:w-10 md:h-14 md:w-14;
 }
 .matchday-future-match-card__vs {
-	@apply flex items-center justify-center text-medium/none tracking-tight uppercase sm:text-medium-large/none;
+	@apply col-span-2 flex items-center justify-center text-medium/tight tracking-tight uppercase sm:text-medium-large/tight;
 }
 
 .matchday-future-match-card__footer {
