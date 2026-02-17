@@ -176,12 +176,15 @@ class Blocks_Manager {
 			$is_final_stage = true;
 		}
 
+		// Check if groups exist.
+		$has_groups = ! empty( $groups );
+
 		echo '<div class="matchday-match-schedule__date">';
 		echo '<h4 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h4>';
 		echo '<div class="matchday-match-schedule__table-wrapper">';
 		echo '<table><thead><tr>';
 		echo '<th>№</th><th>Start</th>';
-		if ( ! $is_final_stage ) {
+		if ( ! $is_final_stage && $has_groups ) {
 			echo '<th>Gr</th>';
 		}
 		echo '<th colspan="3">Match</th><th>Result</th>';
@@ -233,15 +236,17 @@ class Blocks_Manager {
 
 			// Display match title row for final matches.
 			if ( ! empty( $match_title ) ) {
+				// Colspan: № + Start + (Gr if shown) + Match (3 cols) + Result = 6 or 5.
+				$title_colspan = ( ! $is_final_stage && $has_groups ) ? '6' : '5';
 				echo '<tr class="matchday-match-title-row">';
-				echo '<td colspan="6" class="matchday-match-title">' . esc_html( $match_title ) . '</td>';
+				echo '<td colspan="' . esc_attr( $title_colspan ) . '" class="matchday-match-title">' . esc_html( $match_title ) . '</td>';
 				echo '</tr>';
 			}
 
 			echo '<tr>';
 			echo '<td>' . esc_html( $match_number ) . '</td>';
 			echo '<td>' . esc_html( $time ) . '</td>';
-			if ( ! $is_final_stage ) {
+			if ( ! $is_final_stage && $has_groups ) {
 				echo '<td>';
 				if ( ! empty( $group_name ) ) {
 					echo '<span class="matchday-group-badge">' . esc_html( $group_name ) . '</span>';
