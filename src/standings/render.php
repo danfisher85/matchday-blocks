@@ -35,8 +35,7 @@ if ( is_wp_error( $tournament_data ) ) {
 // Check if required data exists.
 if (
 	empty( $tournament_data['teams'] ) ||
-	empty( $tournament_data['groupRankTables'] ) ||
-	empty( $tournament_data['groups'] )
+	empty( $tournament_data['groupRankTables'] )
 ) {
 	echo '<div class="matchday-error">';
 	echo '<p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p>';
@@ -53,24 +52,27 @@ foreach ( $tournament_data['teams'] as $team ) {
 // Display standings.
 echo '<div class="matchday-standings">';
 
+// Check if groups data exists.
+$has_groups = ! empty( $tournament_data['groups'] );
+
 // Loop through each group.
-foreach ( $tournament_data['groups'] as $group_index => $group_data ) {
-	$group_name = $group_data['displayId'];
+foreach ( $tournament_data['groupRankTables'] as $group_index => $rank_table ) {
+	// Get group name if groups exist.
+	if ( $has_groups && isset( $tournament_data['groups'][ $group_index ] ) ) {
+		$group_name = $tournament_data['groups'][ $group_index ]['displayId'];
 
-	// Skip if specific group is requested and this is not it.
-	if ( ! empty( $group ) && strtoupper( $group ) !== strtoupper( $group_name ) ) {
-		continue;
+		// Skip if specific group is requested and this is not it.
+		if ( ! empty( $group ) && strtoupper( $group ) !== strtoupper( $group_name ) ) {
+			continue;
+		}
+	} else {
+		$group_name = '';
 	}
-
-	// Get the rank table for this group.
-	if ( ! isset( $tournament_data['groupRankTables'][ $group_index ] ) ) {
-		continue;
-	}
-
-	$rank_table = $tournament_data['groupRankTables'][ $group_index ];
 
 	echo '<div class="matchday-standings__group">';
-	echo '<h3 class="matchday-standings__group-heading">Group ' . esc_html( $group_name ) . '</h3>';
+	if ( ! empty( $group_name ) ) {
+		echo '<h3 class="matchday-standings__group-heading">Group ' . esc_html( $group_name ) . '</h3>';
+	}
 	echo '<div class="matchday-standings__table-wrapper">';
 	echo '<table>';
 	echo '<thead>';

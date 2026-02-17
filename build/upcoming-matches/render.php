@@ -36,8 +36,10 @@ foreach ( $tournament_data['teams'] as $team ) {
 }
 
 $groups = array();
-foreach ( $tournament_data['groups'] as $index => $group ) {
-	$groups[ $index ] = $group['displayId'];
+if ( ! empty( $tournament_data['groups'] ) ) {
+	foreach ( $tournament_data['groups'] as $index => $group ) {
+		$groups[ $index ] = $group['displayId'];
+	}
 }
 
 $tournament_name = isset( $tournament_data['name'] ) ? $tournament_data['name'] : '';
@@ -64,8 +66,8 @@ echo '<div class="matchday-future-matches">';
 foreach ( $future_matches as $match ) {
 	$team1_id   = $match['team1Id'];
 	$team2_id   = $match['team2Id'];
-	$group_id   = $match['groupId'];
-	$group_name = isset( $groups[ $group_id ] ) ? $groups[ $group_id ] : '';
+	$group_id   = isset( $match['groupId'] ) ? $match['groupId'] : null;
+	$group_name = ( null !== $group_id && isset( $groups[ $group_id ] ) ) ? $groups[ $group_id ] : '';
 	$date_time  = $match['dateAndTime'];
 	$time       = substr( $date_time, 11, 5 );
 	$date       = substr( $date_time, 0, 10 );
