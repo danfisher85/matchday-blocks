@@ -5,9 +5,32 @@
  * @since     1.0.0
  */
 
+/* Two-column layout */
+.matchday-blocks-settings-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 800px) minmax(0, 640px);
+	gap: 30px;
+	align-items: start;
+	margin-top: 20px;
+}
+
+@media screen and (max-width: 1200px) {
+	.matchday-blocks-settings-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.matchday-blocks-column-main {
+	min-width: 0;
+}
+
+.matchday-blocks-column-sidebar {
+	min-width: 0;
+}
+
 /* Tournament Status Card */
 .matchday-blocks-status-card {
-	margin-top: 20px;
+	margin-top: 0;
 }
 
 /* Status Messages */

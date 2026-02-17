@@ -339,15 +339,20 @@ class Settings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<form action="options.php" method="post">
-				<?php
-				settings_fields( self::SETTINGS_GROUP );
-				do_settings_sections( self::PAGE_SLUG );
-				submit_button( __( 'Save Settings', 'matchday-blocks' ) );
-				?>
-			</form>
-
-			<?php $this->render_status_card(); ?>
+			<div class="matchday-blocks-settings-layout">
+				<div class="matchday-blocks-column-main">
+					<form action="options.php" method="post">
+						<?php
+						settings_fields( self::SETTINGS_GROUP );
+						do_settings_sections( self::PAGE_SLUG );
+						submit_button( __( 'Save Settings', 'matchday-blocks' ) );
+						?>
+					</form>
+				</div>
+				<div class="matchday-blocks-column-sidebar">
+					<?php $this->render_status_card(); ?>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
