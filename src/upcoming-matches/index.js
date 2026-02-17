@@ -1,6 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl, Placeholder } from '@wordpress/components';
+import { PanelBody, RangeControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 registerBlockType('matchday/upcoming-matches', {
