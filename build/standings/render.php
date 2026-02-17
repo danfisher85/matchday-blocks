@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $group = isset( $attributes['group'] ) ? $attributes['group'] : '';
+$show_final_standings = isset( $attributes['showFinalStandings'] ) ? $attributes['showFinalStandings'] : true;
 
 // Get tournament data.
 $tournament_data_handler = \Matchday_Blocks\API\Tournament_Data::get_instance();
@@ -133,8 +134,8 @@ foreach ( $tournament_data['groupRankTables'] as $group_index => $rank_table ) {
 	echo '</div>';
 }
 
-// Display final standings if available.
-if ( ! empty( $tournament_data['finalMatches'] ) && ! empty( $tournament_data['finalRankTable'] ) ) {
+// Display final standings if available and enabled.
+if ( $show_final_standings && ! empty( $tournament_data['finalMatches'] ) && ! empty( $tournament_data['finalRankTable'] ) ) {
 	$final_standings = $manager->get_final_standings_from_rank_table( $tournament_data['finalRankTable'], $tournament_data['finalMatches'], $teams );
 
 	if ( ! empty( $final_standings ) ) {

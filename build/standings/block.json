@@ -17,6 +17,10 @@
     "group": {
       "type": "string",
       "default": ""
+    },
+    "showFinalStandings": {
+      "type": "boolean",
+      "default": true
     }
   },
   "supports": {
