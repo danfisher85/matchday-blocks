@@ -42,6 +42,10 @@
 	color: #f56e28;
 }
 
+.matchday-blocks-status-error {
+	color: #dc3232;
+}
+
 .matchday-blocks-status-success::before,
 .matchday-blocks-status-warning::before {
 	margin-right: 4px;

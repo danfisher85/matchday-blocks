@@ -41,7 +41,7 @@
 
 			// Disable button and show loading state
 			$btn.prop('disabled', true).text(matchdayBlocks.i18n.clearing);
-			$message.removeClass('success error').text('');
+			$message.removeClass('matchday-blocks-status-success matchday-blocks-status-error').text('');
 
 			// Make AJAX request
 			$.ajax({
@@ -54,8 +54,8 @@
 				success: function (response) {
 					if (response.success) {
 						$message
-							.addClass('success')
-							.css('color', '#46b450')
+							.removeClass('matchday-blocks-status-error')
+							.addClass('matchday-blocks-status-success')
 							.text(response.data.message);
 
 						// Reload page after 1 second to update cache status
@@ -64,16 +64,16 @@
 						}, 1000);
 					} else {
 						$message
-							.addClass('error')
-							.css('color', '#dc3232')
+							.removeClass('matchday-blocks-status-success')
+							.addClass('matchday-blocks-status-error')
 							.text(response.data.message || matchdayBlocks.i18n.error);
 						$btn.prop('disabled', false).text(originalText);
 					}
 				},
 				error: function () {
 					$message
-						.addClass('error')
-						.css('color', '#dc3232')
+						.removeClass('matchday-blocks-status-success')
+						.addClass('matchday-blocks-status-error')
 						.text(matchdayBlocks.i18n.error);
 					$btn.prop('disabled', false).text(originalText);
 				},
