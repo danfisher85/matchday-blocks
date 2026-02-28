@@ -339,6 +339,7 @@ class Settings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<?php $this->render_privacy_notice(); ?>
 			<div class="matchday-blocks-settings-layout">
 				<div class="matchday-blocks-column-main">
 					<form action="options.php" method="post">
@@ -368,8 +369,8 @@ class Settings {
 	private function maybe_handle_settings_update() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['settings-updated'] ) ) {
-			// Clear the cached tournament data.
-			delete_transient( self::TRANSIENT_KEY );
+			// Clear cached tournament data and locally stored logo files.
+			\Matchday_Blocks\API\Tournament_Data::get_instance()->clear_cache();
 
 			add_settings_error(
 				'matchday_blocks_messages',
@@ -444,6 +445,33 @@ class Settings {
 	}
 
 	/**
+	 * Render the privacy / external services notice
+	 *
+	 * Informs site admins that tournament data (including team logos) is
+	 * fetched from MeinTurnierplan and that logos are stored locally to
+	 * protect visitor privacy.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function render_privacy_notice(): void {
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p>
+				<?php
+				printf(
+					/* translators: 1: Link to MeinTurnierplan, 2: Link to their privacy policy */
+					esc_html__( 'This plugin fetches tournament data (match results, standings, team names and logos) from %1$s. To protect your visitors\' privacy, team logos are downloaded and served locally — visitor browsers will never contact MeinTurnierplan\'s servers directly. Please review their %2$s.', 'matchday-blocks' ),
+					'<a href="https://www.meinturnierplan.de" target="_blank" rel="noopener noreferrer">MeinTurnierplan</a>',
+					'<a href="https://www.meinturnierplan.de/datenschutz" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Privacy Policy', 'matchday-blocks' ) . '</a>'
+				);
+				?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Get the tournament ID from options
 	 *
 	 * @since 1.0.0
@@ -493,8 +521,8 @@ class Settings {
 			);
 		}
 
-		// Clear the cache.
-		$cleared = delete_transient( self::TRANSIENT_KEY );
+		// Clear cached tournament data and locally stored logo files.
+		$cleared = \Matchday_Blocks\API\Tournament_Data::get_instance()->clear_cache();
 
 		if ( $cleared ) {
 			wp_send_json_success(
