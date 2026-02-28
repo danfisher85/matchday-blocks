@@ -72,18 +72,18 @@ foreach ( $tournament_data['groupRankTables'] as $group_index => $rank_table ) {
 
 	echo '<div class="matchday-standings__group">';
 	if ( ! empty( $group_name ) ) {
-		echo '<h3 class="matchday-standings__group-heading">Group ' . esc_html( $group_name ) . '</h3>';
+		echo '<h3 class="matchday-standings__group-heading">' . esc_html( sprintf( __( 'Group %s', 'matchday-blocks' ), $group_name ) ) . '</h3>';
 	}
 	echo '<div class="matchday-standings__table-wrapper">';
 	echo '<table>';
 	echo '<thead>';
 	echo '<tr>';
-	echo '<th class="matchday-table__pos">Pl</th>';
-	echo '<th class="matchday-table__participant">Participants</th>';
-	echo '<th>M</th>';
-	echo '<th>G</th>';
-	echo '<th>GD</th>';
-	echo '<th class="matchday-table__pts">Pts</th>';
+	echo '<th class="matchday-table__pos">' . esc_html__( 'Pl', 'matchday-blocks' ) . '</th>';
+	echo '<th class="matchday-table__participant">' . esc_html__( 'Participants', 'matchday-blocks' ) . '</th>';
+	echo '<th>' . esc_html__( 'M', 'matchday-blocks' ) . '</th>';
+	echo '<th>' . esc_html__( 'G', 'matchday-blocks' ) . '</th>';
+	echo '<th>' . esc_html__( 'GD', 'matchday-blocks' ) . '</th>';
+	echo '<th class="matchday-table__pts">' . esc_html__( 'Pts', 'matchday-blocks' ) . '</th>';
 	echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
@@ -145,8 +145,8 @@ if ( $show_final_standings && ! empty( $tournament_data['finalMatches'] ) && ! e
 		echo '<table>';
 		echo '<thead>';
 		echo '<tr>';
-		echo '<th class="matchday-table__pos">Pl</th>';
-		echo '<th class="matchday-table__participant">Participants</th>';
+		echo '<th class="matchday-table__pos">' . esc_html__( 'Pl', 'matchday-blocks' ) . '</th>';
+		echo '<th class="matchday-table__participant">' . esc_html__( 'Participants', 'matchday-blocks' ) . '</th>';
 		echo '</tr>';
 		echo '</thead>';
 		echo '<tbody>';

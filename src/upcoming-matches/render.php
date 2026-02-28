@@ -91,7 +91,7 @@ foreach ( $future_matches as $match ) {
 	echo '<div class="matchday-future-match-card__header">';
 	echo '<div class="matchday-future-match-card__tournament">' . esc_html( $tournament_name ) . '</div>';
 	if ( ! empty( $group_name ) ) {
-		echo '<div class="matchday-future-match-card__group">Group ' . esc_html( $group_name ) . '</div>';
+		echo '<div class="matchday-future-match-card__group">' . esc_html( sprintf( __( 'Group %s', 'matchday-blocks' ), $group_name ) ) . '</div>';
 	}
 	echo '</div>';
 	echo '<div class="matchday-future-match-card__content">';
@@ -102,7 +102,7 @@ foreach ( $future_matches as $match ) {
 	}
 	echo '<div class="matchday-future-match-card__team-name">' . esc_html( $team1_name ) . '</div>';
 	echo '</div>';
-	echo '<div class="matchday-future-match-card__vs">VS</div>';
+	echo '<div class="matchday-future-match-card__vs">' . esc_html__( 'VS', 'matchday-blocks' ) . '</div>';
 	echo '<div class="matchday-future-match-card__team matchday-future-match-card__team--2">';
 	if ( ! empty( $team2_logo ) ) {
 		echo '<img src="' . esc_url( $team2_logo ) . '" alt="' . esc_attr( $team2_name ) . '" class="matchday-future-match-card__logo" />';

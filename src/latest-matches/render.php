@@ -86,7 +86,7 @@ foreach ( $finished_matches as $match ) {
 	echo '</div>';
 	echo '<div class="matchday-match-card__score">' . esc_html( $score1 ) . '</div>';
 	echo '</div>';
-	echo '<div class="matchday-match-card__vs">VS</div>';
+	echo '<div class="matchday-match-card__vs">' . esc_html__( 'VS', 'matchday-blocks' ) . '</div>';
 	echo '<div class="matchday-match-card__team matchday-match-card__team--2">';
 	echo '<div class="matchday-match-card__team-info">';
 	if ( ! empty( $team2_logo ) ) {
