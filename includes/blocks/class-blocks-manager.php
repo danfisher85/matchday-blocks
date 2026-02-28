@@ -183,11 +183,11 @@ class Blocks_Manager {
 		echo '<h4 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h4>';
 		echo '<div class="matchday-match-schedule__table-wrapper">';
 		echo '<table><thead><tr>';
-		echo '<th>№</th><th>Start</th>';
+		echo '<th>№</th><th>' . esc_html__( 'Start', 'matchday-blocks' ) . '</th>';
 		if ( ! $is_final_stage && $has_groups ) {
-			echo '<th>Gr</th>';
+			echo '<th>' . esc_html__( 'Gr', 'matchday-blocks' ) . '</th>';
 		}
-		echo '<th colspan="3">Match</th><th>Result</th>';
+		echo '<th colspan="3">' . esc_html__( 'Match', 'matchday-blocks' ) . '</th><th>' . esc_html__( 'Result', 'matchday-blocks' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		foreach ( $matches as $match ) {
@@ -368,7 +368,7 @@ class Blocks_Manager {
 				4 => __( '4th', 'matchday-blocks' ),
 			);
 
-			$rank_label = isset( $rank_labels[ $rank ] ) ? $rank_labels[ $rank ] : $rank . 'th';
+			$rank_label = isset( $rank_labels[ $rank ] ) ? $rank_labels[ $rank ] : $rank . __( 'th', 'matchday-blocks' );
 
 			/* translators: 1: rank label, 2: group name */
 			return sprintf( __( '%1$s Group %2$s', 'matchday-blocks' ), $rank_label, $group_name );
@@ -411,18 +411,23 @@ class Blocks_Manager {
 		$number = (int) $number;
 
 		if ( $number % 100 >= 11 && $number % 100 <= 13 ) {
-			return $number . 'th';
+			/* translators: ordinal number suffix for 11th-13th */
+			return $number . __( 'th', 'matchday-blocks' );
 		}
 
 		switch ( $number % 10 ) {
 			case 1:
-				return $number . 'st';
+				/* translators: ordinal number suffix for 1st */
+				return $number . __( 'st', 'matchday-blocks' );
 			case 2:
-				return $number . 'nd';
+				/* translators: ordinal number suffix for 2nd */
+				return $number . __( 'nd', 'matchday-blocks' );
 			case 3:
-				return $number . 'rd';
+				/* translators: ordinal number suffix for 3rd */
+				return $number . __( 'rd', 'matchday-blocks' );
 			default:
-				return $number . 'th';
+				/* translators: ordinal number suffix for 4th and above */
+				return $number . __( 'th', 'matchday-blocks' );
 		}
 	}
 }
