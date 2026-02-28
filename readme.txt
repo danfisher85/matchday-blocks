@@ -1,0 +1,67 @@
+=== Matchday Blocks ===
+Contributors:       ramzesimus, meinturnierplan
+Tags:               gutenberg, blocks, tournament, football, sports
+Requires at least:  6.0
+Tested up to:       6.9
+Requires PHP:       7.4
+Stable tag:         1.0.0
+License:            GPLv2 or later
+License URI:        https://www.gnu.org/licenses/gpl-2.0.html
+
+Display tournament schedules, standings and match results from MeinTurnierplan directly in your WordPress site using Gutenberg blocks.
+
+== Description ==
+
+Matchday Blocks integrates with the MeinTurnierplan platform to let you embed live tournament data — match schedules, group standings and results — anywhere on your site using native Gutenberg blocks.
+
+Features:
+
+* Match Schedule block — list all matches grouped by round and date
+* Standings block — show live group standings
+* Latest Matches block — display the most recently played fixtures
+* Upcoming Matches block — show the next scheduled fixtures
+* Configurable cache to reduce external API requests
+* Team logos downloaded and served locally (no third-party image requests from visitor browsers)
+
+== Installation ==
+
+1. Upload the plugin folder to `/wp-content/plugins/matchday-blocks/`.
+2. Activate the plugin through the **Plugins** screen in WordPress.
+3. Go to **MeinTurnierplan** in the admin menu and enter your Tournament ID.
+4. Add any Matchday block to a page or post from the block inserter.
+
+== Frequently Asked Questions ==
+
+= Where do I find my Tournament ID? =
+
+Log in to your MeinTurnierplan account, open the tournament and copy the numeric ID from the URL (e.g. `https://www.meinturnierplan.de/…?id=12345`).
+
+= How often is tournament data refreshed? =
+
+You can configure the cache duration (1–168 hours) on the settings page. Data is re-fetched from MeinTurnierplan once the cache expires or when you click **Clear Cache Now**.
+
+= Are visitor IP addresses shared with MeinTurnierplan? =
+
+No. Team logos are downloaded to your server when the cache is first populated and served locally thereafter. Visitor browsers never contact MeinTurnierplan's servers directly.
+
+== External Services ==
+
+This plugin connects to **MeinTurnierplan** (https://www.meinturnierplan.de) to retrieve tournament data.
+
+* **Data sent:** The Tournament ID you configured in the plugin settings.
+* **Data received:** Match results, team names, group standings, final round fixtures and team logo URLs.
+* **When:** Only on the server side — when the cache is empty or expired, or when you manually clear the cache. Visitor browsers are never used to contact MeinTurnierplan.
+* **Logo images:** Team logos are downloaded to your WordPress uploads directory (`/uploads/matchday-blocks/logos/`) and served from your own server.
+
+Service terms of use: https://www.meinturnierplan.de/agb
+Privacy policy:       https://www.meinturnierplan.de/datenschutz
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial release.
