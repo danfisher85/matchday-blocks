@@ -53,8 +53,8 @@ This plugin connects to **MeinTurnierplan** (https://www.meinturnierplan.de) to 
 * **When:** Only on the server side — when the cache is empty or expired, or when you manually clear the cache. Visitor browsers are never used to contact MeinTurnierplan.
 * **Logo images:** Team logos are downloaded to your WordPress uploads directory (`/uploads/matchday-blocks/logos/`) and served from your own server.
 
-Service terms of use: https://www.meinturnierplan.de/agb
-Privacy policy:       https://www.meinturnierplan.de/datenschutz
+Service terms of use: https://www.meinturnierplan.de/legal.php?t=tou&v=2019-04-20&l=en
+Privacy policy:       https://www.meinturnierplan.de/legal.php?t=privacy&v=2019-04-20&l=en
 
 == Changelog ==
 

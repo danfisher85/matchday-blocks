@@ -463,7 +463,7 @@ class Settings {
 					/* translators: 1: Link to MeinTurnierplan, 2: Link to their privacy policy */
 					esc_html__( 'This plugin fetches tournament data (match results, standings, team names and logos) from %1$s. To protect your visitors\' privacy, team logos are downloaded and served locally — visitor browsers will never contact MeinTurnierplan\'s servers directly. Please review their %2$s.', 'matchday-blocks' ),
 					'<a href="https://www.meinturnierplan.de" target="_blank" rel="noopener noreferrer">MeinTurnierplan</a>',
-					'<a href="https://www.meinturnierplan.de/datenschutz" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Privacy Policy', 'matchday-blocks' ) . '</a>'
+					'<a href="https://www.meinturnierplan.de/legal.php?t=privacy&v=2019-04-20&l=en" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Privacy Policy', 'matchday-blocks' ) . '</a>'
 				);
 				?>
 			</p>
