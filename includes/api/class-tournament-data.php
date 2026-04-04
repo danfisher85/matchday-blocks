@@ -224,11 +224,7 @@ class Tournament_Data {
 	 * @return string API URL.
 	 */
 	private function build_api_url( $tournament_id ) {
-		return add_query_arg(
-			'id',
-			urlencode( $tournament_id ),
-			self::API_BASE_URL
-		);
+		return add_query_arg( 'id', $tournament_id, self::API_BASE_URL );
 	}
 
 	/**
@@ -351,13 +347,19 @@ class Tournament_Data {
 		$local_file = $logos_dir . $safe_name;
 		$local_url  = $logos_url . $safe_name;
 
+		// Initialise WP_Filesystem early so we can use it for all file checks.
+		$filesystem = $this->get_filesystem();
+		if ( ! $filesystem ) {
+			return $remote_url;
+		}
+
 		// Check stored hash to detect whether the source URL has changed.
 		$url_hashes   = get_option( self::LOGO_HASHES_OPTION, array() );
 		$current_hash = md5( $remote_url );
 		$stored_hash  = isset( $url_hashes[ $filename ] ) ? $url_hashes[ $filename ] : '';
 
 		// Skip download if file exists and source URL is unchanged.
-		if ( file_exists( $local_file ) && $current_hash === $stored_hash ) {
+		if ( $filesystem->exists( $local_file ) && $current_hash === $stored_hash ) {
 			return $local_url;
 		}
 
@@ -371,12 +373,6 @@ class Tournament_Data {
 		}
 
 		$image_data = wp_remote_retrieve_body( $response );
-
-		// Use WP_Filesystem to write the file (required by WordPress.org guidelines).
-		$filesystem = $this->get_filesystem();
-		if ( ! $filesystem ) {
-			return $remote_url;
-		}
 		$filesystem->put_contents( $local_file, $image_data, FS_CHMOD_FILE );
 
 		// Update the stored hash so we know this URL was last seen.
@@ -407,11 +403,11 @@ class Tournament_Data {
 			return;
 		}
 
-		$files = glob( $logos_dir . '*' );
+		$files = $filesystem->dirlist( $logos_dir );
 		if ( $files ) {
-			foreach ( $files as $file ) {
-				if ( is_file( $file ) ) {
-					$filesystem->delete( $file );
+			foreach ( $files as $file_name => $file_info ) {
+				if ( 'f' === $file_info['type'] ) {
+					$filesystem->delete( $logos_dir . $file_name );
 				}
 			}
 		}

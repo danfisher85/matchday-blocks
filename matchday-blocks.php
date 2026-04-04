@@ -4,7 +4,7 @@
  * Plugin URI:  https://www.meinturnierplan.de
  * Description: Display tournament tables and matches from MeinTurnierplan using blocks.
  * Version:     1.0.0
- * Author:      MeinTurnierplan
+ * Author:      Roman Perevala
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: matchday-blocks
