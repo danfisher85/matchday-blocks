@@ -62,7 +62,7 @@ Privacy policy:       https://www.meinturnierplan.de/legal.php?t=privacy&v=2019-
 
 Source code and build tools are available at https://github.com/danfisher85/matchday-blocks
 
-Prerequisites: Node.js and npm.
+Prerequisites: Node.js and npm. Blocks are compiled using `@wordpress/scripts` (webpack-based). CSS is processed using PostCSS with Tailwind CSS.
 
 To install dependencies:
 
