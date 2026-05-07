@@ -10,3 +10,7 @@ package-lock.json
 .env
 .vscode
 .idea
+src
+node_scripts
+postcss.config.js
+assets/css/src
