@@ -16,6 +16,9 @@
 		"start": "npm-run-all --parallel start:blocks start:css",
 		"start:blocks": "wp-scripts start",
 		"start:css": "postcss assets/css/src/main.css -o assets/css/blocks.css --watch",
-		"zip": "npm run build && OUT=$(pwd) && TMP=$(mktemp -d) && rsync -a --exclude='.git' --exclude='.gitignore' --exclude='.svnignore' --exclude='.editorconfig' --exclude='.DS_Store' --exclude='node_modules/' --exclude='src/' --exclude='assets/css/src/' --exclude='node_scripts/' --exclude='postcss.config.js' --exclude='package.json' --exclude='package-lock.json' --exclude='*.js.map' --exclude='matchday-blocks.zip' ./ \"$TMP/matchday-blocks/\" && cd \"$TMP\" && zip -r \"$OUT/matchday-blocks.zip\" matchday-blocks && rm -rf \"$TMP\" && echo 'Created matchday-blocks.zip'"
+		"zip": "npm run build && OUT=$(pwd) && TMP=$(mktemp -d) && rsync -a --exclude='.git' --exclude='.gitignore' --exclude='.svnignore' --exclude='.editorconfig' --exclude='.DS_Store' --exclude='node_modules/' --exclude='src/' --exclude='assets/css/src/' --exclude='node_scripts/' --exclude='postcss.config.js' --exclude='package.json' --exclude='package-lock.json' --exclude='*.js.map' --exclude='matchday-blocks.zip' ./ \"$TMP/matchday-blocks/\" && cd \"$TMP\" && zip -r \"$OUT/matchday-blocks.zip\" matchday-blocks && rm -rf \"$TMP\" && echo 'Created matchday-blocks.zip'",
+		"build:svn": "npm run clean:svn && npm run copy:svn",
+		"clean:svn": "rm -rf svn/matchday-blocks/trunk/* && mkdir -p svn/matchday-blocks/trunk",
+		"copy:svn": "rsync -av --exclude-from='.svnignore' --exclude='svn/' --exclude='.git/' --exclude='.gitignore' --exclude='node_modules/' --exclude='package.json' --exclude='package-lock.json' --exclude='.svnignore' ./ svn/matchday-blocks/trunk/"
 	}
 }
