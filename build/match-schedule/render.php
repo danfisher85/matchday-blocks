@@ -30,15 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		return;
 	}
 
-	if ( empty( $tournament_data['teams'] ) ) {
+	if ( empty( $tournament_data['participants'] ) ) {
 		echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
 		return;
 	}
 
-	$teams = array();
-	foreach ( $tournament_data['teams'] as $team ) {
-		$teams[ $team['displayId'] - 1 ] = $team;
-	}
+	$teams = $tournament_data['participants'];
 
 	$groups = array();
 	if ( ! empty( $tournament_data['groups'] ) ) {
@@ -72,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	if ( ! empty( $tournament_data['finalMatches'] ) ) {
 		foreach ( $tournament_data['finalMatches'] as $match ) {
 			// Skip matches without teams assigned yet.
-			if ( ! isset( $match['team1Id'] ) || ! isset( $match['team2Id'] ) ) {
+			if ( ! isset( $match['homeParticipant'] ) || ! isset( $match['awayParticipant'] ) ) {
 				continue;
 			}
 
@@ -95,15 +92,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 	ksort( $group_matches_by_date );
 	ksort( $final_matches_by_date );
 
+	// Build date → round number map from all group match dates (unfiltered).
+	$all_group_dates = array();
+	if ( ! empty( $tournament_data['groupMatches'] ) ) {
+		foreach ( $tournament_data['groupMatches'] as $m ) {
+			$all_group_dates[] = substr( $m['dateAndTime'], 0, 10 );
+		}
+	}
+	$all_group_dates = array_unique( $all_group_dates );
+	sort( $all_group_dates );
+	$date_to_round = array();
+	foreach ( $all_group_dates as $round_index => $round_date ) {
+		$date_to_round[ $round_date ] = $round_index + 1;
+	}
+
 	echo '<div class="matchday-match-schedule">';
+
+	$has_final_round = ! empty( $final_matches_by_date );
 
 	// Display Preliminary Round (Group Matches).
 	if ( ! empty( $group_matches_by_date ) ) {
 		echo '<div class="matchday-match-schedule__stage">';
-		echo '<h3 class="matchday-match-schedule__stage-heading">' . esc_html__( 'Preliminary Round', 'matchday-blocks' ) . '</h3>';
+		if ( $has_final_round ) {
+			echo '<h3 class="matchday-match-schedule__stage-heading">' . esc_html__( 'Preliminary Round', 'matchday-blocks' ) . '</h3>';
+		}
 
 		foreach ( $group_matches_by_date as $match_date => $matches ) {
-			$manager->render_match_schedule_table( $matches, $match_date, $teams, $groups );
+			$round = isset( $date_to_round[ $match_date ] ) ? $date_to_round[ $match_date ] : null;
+			$manager->render_match_schedule_table( $matches, $match_date, $teams, $groups, $round );
 		}
 
 		echo '</div>';

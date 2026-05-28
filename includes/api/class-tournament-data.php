@@ -35,6 +35,14 @@ class Tournament_Data {
 	const TRANSIENT_KEY = 'matchday_blocks_tournament_data';
 
 	/**
+	 * WP-Cron hook name for background cache refresh
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const CRON_HOOK = 'matchday_blocks_refresh_cache';
+
+	/**
 	 * Option key for local logo URL hashes (used to detect remote changes)
 	 *
 	 * @since 1.0.0
@@ -112,6 +120,10 @@ class Tournament_Data {
 	 */
 	private function init_hooks() {
 		add_action( 'update_option_' . self::OPTION_TOURNAMENT_ID, array( $this, 'clear_cache_on_option_update' ), 10, 2 );
+		add_action( 'update_option_' . self::OPTION_CACHE_TIME, array( $this, 'reschedule_cron_on_cache_time_update' ), 10, 2 );
+		add_filter( 'cron_schedules', array( $this, 'add_cron_schedule' ) );
+		add_action( 'init', array( $this, 'schedule_cron' ) );
+		add_action( self::CRON_HOOK, array( $this, 'run_cron_refresh' ) );
 	}
 
 	/**
@@ -206,8 +218,8 @@ class Tournament_Data {
 		}
 
 		// Download and store team logos locally to avoid exposing visitor IPs to third-party servers.
-		if ( ! empty( $data['teams'] ) ) {
-			$data['teams'] = $this->cache_team_logos( $data['teams'] );
+		if ( ! empty( $data['participants'] ) ) {
+			$data['participants'] = $this->cache_team_logos( $data['participants'] );
 		}
 
 		// Cache the data.
@@ -303,6 +315,78 @@ class Tournament_Data {
 		if ( $old_value !== $new_value ) {
 			$this->clear_cache();
 		}
+	}
+
+	/**
+	 * Register a custom cron schedule matching the configured cache time.
+	 *
+	 * @since 1.0.0
+	 * @param array $schedules Existing cron schedules.
+	 * @return array Modified schedules.
+	 */
+	public function add_cron_schedule( array $schedules ): array {
+		$hours    = $this->get_cache_time();
+		$key      = 'matchday_blocks_every_' . $hours . 'h';
+		$schedules[ $key ] = array(
+			'interval' => $hours * HOUR_IN_SECONDS,
+			/* translators: %d: number of hours */
+			'display'  => sprintf( __( 'Every %d hour(s) (Matchday Blocks)', 'matchday-blocks' ), $hours ),
+		);
+		return $schedules;
+	}
+
+	/**
+	 * Schedule the background cache refresh cron event if not already scheduled.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function schedule_cron(): void {
+		if ( empty( $this->get_tournament_id() ) ) {
+			return;
+		}
+		if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
+			$hours = $this->get_cache_time();
+			wp_schedule_event( time(), 'matchday_blocks_every_' . $hours . 'h', self::CRON_HOOK );
+		}
+	}
+
+	/**
+	 * Unschedule the background cache refresh cron event.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function unschedule_cron(): void {
+		$timestamp = wp_next_scheduled( self::CRON_HOOK );
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, self::CRON_HOOK );
+		}
+	}
+
+	/**
+	 * Reschedule the cron when the cache time setting changes.
+	 *
+	 * @since 1.0.0
+	 * @param mixed $old_value Old option value.
+	 * @param mixed $new_value New option value.
+	 * @return void
+	 */
+	public function reschedule_cron_on_cache_time_update( $old_value, $new_value ): void {
+		if ( $old_value !== $new_value ) {
+			$this->unschedule_cron();
+			// schedule_cron() will register a new event on the next init.
+		}
+	}
+
+	/**
+	 * Background cron callback: refresh tournament data cache.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function run_cron_refresh(): void {
+		$this->get_tournament_data( true );
 	}
 
 	/**

@@ -3,7 +3,7 @@
  * Plugin Name: Matchday Blocks
  * Plugin URI:  https://www.meinturnierplan.de
  * Description: Display tournament tables and matches from MeinTurnierplan using blocks.
- * Version:     1.0.1
+ * Version:     1.1.0
  * Author:      MeinTurnierplan
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MATCHDAY_BLOCKS_VERSION', '1.0.1');
+define('MATCHDAY_BLOCKS_VERSION', '1.1.0');
 define('MATCHDAY_BLOCKS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MATCHDAY_BLOCKS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -26,6 +26,13 @@ define('MATCHDAY_BLOCKS_PLUGIN_URL', plugin_dir_url(__FILE__));
 require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/admin/class-settings.php';
 require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/api/class-tournament-data.php';
 require_once MATCHDAY_BLOCKS_PLUGIN_DIR . 'includes/blocks/class-blocks-manager.php';
+
+/**
+ * Deactivation: unschedule background cron job.
+ */
+register_deactivation_hook( __FILE__, function () {
+	\Matchday_Blocks\API\Tournament_Data::get_instance()->unschedule_cron();
+} );
 
 /**
  * Initialize plugin

@@ -8,7 +8,13 @@
 	@apply overflow-hidden rounded-3xl border border-solid border-base-3;
 }
 .matchday-standings__group-heading {
-	@apply my-0 px-6 py-6 text-lg font-extrabold;
+	@apply flex items-center gap-2 px-6 py-6;
+}
+.matchday-standings__group-logo {
+	@apply h-8 w-8 shrink-0 object-contain object-center;
+}
+.matchday-standings__group-title {
+	@apply my-0 text-lg font-extrabold;
 }
 
 .matchday-standings__table-wrapper {
@@ -18,7 +24,7 @@
 	@apply w-full border-collapse border-spacing-0 text-small;
 }
 .matchday-standings__group table thead th {
-	@apply border border-x-0 border-solid border-y-base-3 bg-base-2 px-3 py-3 text-center text-x-small font-bold uppercase first:ps-6 last:pe-6;
+	@apply border border-x-0 border-solid border-y-base-3 border-t-0! bg-base-2 px-3 py-3 text-center text-x-small font-bold uppercase first:ps-6 last:pe-6;
 }
 .matchday-standings__group table thead th.matchday-table__pos {
 	@apply pe-0 text-left;

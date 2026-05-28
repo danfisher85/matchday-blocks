@@ -142,9 +142,9 @@ class Blocks_Manager {
 		// Process rank table entries directly from API.
 		if ( is_array( $rank_table ) ) {
 			foreach ( $rank_table as $entry ) {
-				if ( isset( $entry['rank'] ) && isset( $entry['teamId'] ) ) {
+				if ( isset( $entry['rank'] ) && isset( $entry['participant'] ) ) {
 					$rank = intval( $entry['rank'] );
-					$team_id = $entry['teamId'];
+					$team_id = $entry['participant'];
 					$standings[ $rank ] = $team_id;
 				}
 			}
@@ -166,7 +166,7 @@ class Blocks_Manager {
 	 * @param array  $groups     Groups data.
 	 * @return void
 	 */
-	public function render_match_schedule_table( $matches, $match_date, $teams, $groups ) {
+	public function render_match_schedule_table( $matches, $match_date, $teams, $groups, $round = null ) {
 		$date_obj = \DateTime::createFromFormat( 'Y-m-d', $match_date );
 		$date_heading = $date_obj ? $date_obj->format( 'l, F j, Y' ) : $match_date;
 
@@ -180,7 +180,13 @@ class Blocks_Manager {
 		$has_groups = ! empty( $groups );
 
 		echo '<div class="matchday-match-schedule__date">';
-		echo '<h4 class="matchday-match-schedule__date-heading">' . esc_html( $date_heading ) . '</h4>';
+		echo '<div class="matchday-match-schedule__date-heading">';
+		echo '<h4 class="matchday-match-schedule__date-title">' . esc_html( $date_heading ) . '</h4>';
+		// if ( null !== $round ) {
+		// 	/* translators: %d: round number */
+		// 	echo '<span class="matchday-match-schedule__date-round">' . esc_html( sprintf( __( 'Round %d', 'matchday-blocks' ), $round ) ) . '</span>';
+		// }
+		echo '</div>';
 		echo '<div class="matchday-match-schedule__table-wrapper">';
 		echo '<table><thead><tr>';
 		echo '<th>№</th><th>' . esc_html__( 'Start', 'matchday-blocks' ) . '</th>';
@@ -201,8 +207,8 @@ class Blocks_Manager {
 				$group_name = isset( $groups[ $group_id ] ) ? $groups[ $group_id ] : '';
 			}
 
-			$team1_id = $match['team1Id'];
-			$team2_id = $match['team2Id'];
+			$team1_id = $match['homeParticipant'];
+			$team2_id = $match['awayParticipant'];
 			$score1   = isset( $match['score1'] ) ? $match['score1'] : '';
 			$score2   = isset( $match['score2'] ) ? $match['score2'] : '';
 
@@ -213,10 +219,10 @@ class Blocks_Manager {
 				continue;
 			}
 
-			$team1_name = $team1['name'];
-			$team2_name = $team2['name'];
-			$team1_logo = isset( $team1['logo']['lx32w'] ) ? $team1['logo']['lx32w'] : '';
-			$team2_logo = isset( $team2['logo']['lx32w'] ) ? $team2['logo']['lx32w'] : '';
+			$team1_name = ! empty( $team1['name'] ) ? $team1['name'] : '–';
+			$team2_name = ! empty( $team2['name'] ) ? $team2['name'] : '–';
+			$team1_logo = isset( $team1['logo']['lx95w'] ) ? $team1['logo']['lx95w'] : '';
+			$team2_logo = isset( $team2['logo']['lx95w'] ) ? $team2['logo']['lx95w'] : '';
 
 			$has_result = ! empty( $score1 ) || ! empty( $score2 ) || $score1 === '0' || $score2 === '0';
 

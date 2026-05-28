@@ -26,15 +26,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		return;
 	}
 
-	if ( empty( $tournament_data['teams'] ) || empty( $tournament_data['groupMatches'] ) ) {
+	if ( empty( $tournament_data['participants'] ) || empty( $tournament_data['groupMatches'] ) ) {
 		echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
 		return;
 	}
 
-	$teams = array();
-	foreach ( $tournament_data['teams'] as $team ) {
-		$teams[ $team['displayId'] - 1 ] = $team;
-	}
+	$teams = $tournament_data['participants'];
 
 	$tournament_name = isset( $tournament_data['name'] ) ? $tournament_data['name'] : '';
 
@@ -58,8 +55,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	echo '<div class="matchday-latest-matches">';
 
 	foreach ( $finished_matches as $match ) {
-		$team1_id = $match['team1Id'];
-		$team2_id = $match['team2Id'];
+		$team1_id = $match['homeParticipant'];
+		$team2_id = $match['awayParticipant'];
 		$score1   = isset( $match['score1'] ) ? $match['score1'] : '0';
 		$score2   = isset( $match['score2'] ) ? $match['score2'] : '0';
 		$time     = substr( $match['dateAndTime'], 11, 5 );
@@ -71,8 +68,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			continue;
 		}
 
-		$team1_name = $team1['name'];
-		$team2_name = $team2['name'];
+		$team1_name = ! empty( $team1['name'] ) ? $team1['name'] : '–';
+		$team2_name = ! empty( $team2['name'] ) ? $team2['name'] : '–';
 		$team1_logo = isset( $team1['logo']['lx95w'] ) ? $team1['logo']['lx95w'] : '';
 		$team2_logo = isset( $team2['logo']['lx95w'] ) ? $team2['logo']['lx95w'] : '';
 

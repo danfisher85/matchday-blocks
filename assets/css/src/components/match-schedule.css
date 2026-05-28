@@ -14,7 +14,10 @@
 	@apply overflow-hidden rounded-3xl border border-solid border-base-3;
 }
 .matchday-match-schedule__date-heading {
-	@apply my-0 px-6 py-6 text-lg font-extrabold;
+	@apply px-6 py-6 flex gap-3;
+}
+.matchday-match-schedule__date-title {
+	@apply my-0 text-lg font-extrabold;
 }
 
 .matchday-match-schedule__table-wrapper {
@@ -24,7 +27,7 @@
 	@apply w-full border-collapse border-spacing-0 text-small;
 }
 .matchday-match-schedule__date table thead th {
-	@apply border border-x-0 border-solid border-y-base-3 bg-base-2 px-3 py-3 text-center text-x-small font-bold uppercase first:ps-6 last:pe-6;
+	@apply border border-x-0 border-solid border-y-base-3 bg-base-2 px-3 py-3 text-center text-x-small font-bold uppercase first:ps-6 first:text-left last:pe-6;
 }
 .matchday-match-schedule__date table thead th.matchday-table__pos {
 	@apply pe-0 text-left;
@@ -33,7 +36,7 @@
 	@apply text-left;
 }
 .matchday-match-schedule__date table tbody td {
-	@apply border-x-0 border-y border-solid border-base-3 px-3 py-3 text-center first:ps-6 last:pe-6;
+	@apply border-x-0 border-y border-solid border-base-3 px-3 py-3 text-center first:ps-6 first:text-left last:pe-6;
 }
 .matchday-match-schedule__date table tbody tr:last-child td {
 	@apply border-b-0;
