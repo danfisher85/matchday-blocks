@@ -4,6 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
+ * @version 1.1.0
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.

@@ -6,6 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
+ * @version   1.1.0
  */
 
 namespace Matchday_Blocks\Blocks;
@@ -130,7 +131,8 @@ class Blocks_Manager {
 	/**
 	 * Get final standings from rank table
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.0
 	 * @param array $rank_table    Final rank table data.
 	 * @param array $final_matches Final matches data (unused, kept for compatibility).
 	 * @param array $teams         Teams data (unused, kept for compatibility).
@@ -159,7 +161,8 @@ class Blocks_Manager {
 	/**
 	 * Render match schedule table for a specific date
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.0
 	 * @param array  $matches    Matches for the date.
 	 * @param string $match_date Date of the matches.
 	 * @param array  $teams      Teams data.

@@ -6,6 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
+ * @version   1.1.0
  */
 
 namespace Matchday_Blocks\API;
@@ -115,7 +116,8 @@ class Tournament_Data {
 	/**
 	 * Initialize WordPress hooks
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.0
 	 * @return void
 	 */
 	private function init_hooks() {
@@ -162,7 +164,8 @@ class Tournament_Data {
 	/**
 	 * Fetch tournament data from API
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.0
 	 * @param string $tournament_id Tournament ID.
 	 * @return array|WP_Error Tournament data or error.
 	 */
@@ -320,7 +323,7 @@ class Tournament_Data {
 	/**
 	 * Register a custom cron schedule matching the configured cache time.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @param array $schedules Existing cron schedules.
 	 * @return array Modified schedules.
 	 */
@@ -338,7 +341,7 @@ class Tournament_Data {
 	/**
 	 * Schedule the background cache refresh cron event if not already scheduled.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @return void
 	 */
 	public function schedule_cron(): void {
@@ -354,7 +357,7 @@ class Tournament_Data {
 	/**
 	 * Unschedule the background cache refresh cron event.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @return void
 	 */
 	public function unschedule_cron(): void {
@@ -367,7 +370,7 @@ class Tournament_Data {
 	/**
 	 * Reschedule the cron when the cache time setting changes.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @param mixed $old_value Old option value.
 	 * @param mixed $new_value New option value.
 	 * @return void
@@ -382,7 +385,7 @@ class Tournament_Data {
 	/**
 	 * Background cron callback: refresh tournament data cache.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @return void
 	 */
 	public function run_cron_refresh(): void {

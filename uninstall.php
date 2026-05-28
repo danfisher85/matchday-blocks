@@ -6,6 +6,8 @@
  * Removes all options, transients, scheduled events, and uploaded logo files.
  *
  * @package Matchday_Blocks
+ * @since   1.1.0
+ * @version 1.1.0
  */
 
 // Only run when WordPress is uninstalling the plugin.

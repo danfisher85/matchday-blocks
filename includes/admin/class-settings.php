@@ -6,6 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
+ * @version   1.1.0
  */
 
 namespace Matchday_Blocks\Admin;
@@ -166,7 +167,8 @@ class Settings {
 	/**
 	 * Register the admin settings page
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.0
 	 * @return void
 	 */
 	public function register_admin_page() {
