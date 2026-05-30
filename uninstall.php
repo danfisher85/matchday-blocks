@@ -7,7 +7,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.1.0
- * @version 1.1.0
+ * @version 1.1.1
  */
 
 // Only run when WordPress is uninstalling the plugin.
@@ -27,19 +27,24 @@ delete_transient( 'matchday_blocks_tournament_data' );
 wp_clear_scheduled_hook( 'matchday_blocks_refresh_cache' );
 
 // --- Uploaded logo files ---
-$upload_dir = wp_upload_dir();
-$logos_dir  = $upload_dir['basedir'] . '/matchday-blocks/logos/';
+$matchday_blocks_upload_dir = wp_upload_dir();
+$matchday_blocks_logos_dir  = $matchday_blocks_upload_dir['basedir'] . '/matchday-blocks/logos/';
 
-if ( is_dir( $logos_dir ) ) {
-	$files = glob( $logos_dir . '*', GLOB_NOSORT );
-	if ( $files ) {
-		foreach ( $files as $file ) {
-			if ( is_file( $file ) ) {
-				wp_delete_file( $file );
+if ( is_dir( $matchday_blocks_logos_dir ) ) {
+	$matchday_blocks_files = glob( $matchday_blocks_logos_dir . '*', GLOB_NOSORT );
+	if ( $matchday_blocks_files ) {
+		foreach ( $matchday_blocks_files as $matchday_blocks_file ) {
+			if ( is_file( $matchday_blocks_file ) ) {
+				wp_delete_file( $matchday_blocks_file );
 			}
 		}
 	}
-	// Remove the now-empty directories.
-	@rmdir( $logos_dir );
-	@rmdir( dirname( $logos_dir ) );
+	// Remove the now-empty directories using WP_Filesystem.
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+	WP_Filesystem();
+	global $wp_filesystem;
+	$wp_filesystem->rmdir( $matchday_blocks_logos_dir );
+	$wp_filesystem->rmdir( dirname( $matchday_blocks_logos_dir ) );
 }
