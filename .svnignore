@@ -16,3 +16,4 @@ src
 node_scripts
 postcss.config.js
 assets/css/src
+*.js.map
