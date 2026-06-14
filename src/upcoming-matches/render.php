@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.0
+ * @version 1.1.2
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -63,6 +63,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	echo '<div class="matchday-future-matches">';
 
 	foreach ( $future_matches as $match ) {
+		if ( ! isset( $match['homeParticipant'] ) || ! isset( $match['awayParticipant'] ) ) {
+			continue;
+		}
+
 		$team1_id   = $match['homeParticipant'];
 		$team2_id   = $match['awayParticipant'];
 		$group_id   = isset( $match['groupId'] ) ? $match['groupId'] : null;

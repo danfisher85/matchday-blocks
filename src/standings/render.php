@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.0
+ * @version 1.1.2
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -31,6 +31,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	if ( is_wp_error( $tournament_data ) ) {
 		echo '<div class="matchday-error">';
 		echo '<p>' . esc_html( $tournament_data->get_error_message() ) . '</p>';
+		echo '</div>';
+		return;
+	}
+
+	// Show a graceful message when the tournament has standings hidden.
+	$hide_ranks = isset( $tournament_data['hideRanks'] ) ? $tournament_data['hideRanks'] : 'none';
+	if ( 'none' !== $hide_ranks ) {
+		echo '<div class="matchday-error">';
+		echo '<p>' . esc_html__( 'Standings are hidden for this tournament.', 'matchday-blocks' ) . '</p>';
 		echo '</div>';
 		return;
 	}
