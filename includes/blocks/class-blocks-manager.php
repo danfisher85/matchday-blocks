@@ -6,7 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
- * @version   1.1.0
+ * @version   1.1.2
  */
 
 namespace Matchday_Blocks\Blocks;
@@ -208,6 +208,10 @@ class Blocks_Manager {
 			if ( $stage === 'group' && isset( $match['groupId'] ) ) {
 				$group_id = $match['groupId'];
 				$group_name = isset( $groups[ $group_id ] ) ? $groups[ $group_id ] : '';
+			}
+
+			if ( ! isset( $match['homeParticipant'] ) || ! isset( $match['awayParticipant'] ) ) {
+				continue;
 			}
 
 			$team1_id = $match['homeParticipant'];
