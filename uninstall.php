@@ -7,8 +7,13 @@
  *
  * @package Matchday_Blocks
  * @since   1.1.0
- * @version 1.1.1
+ * @version 1.1.3
  */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 // Only run when WordPress is uninstalling the plugin.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {

@@ -6,7 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
- * @version   1.1.2
+ * @version   1.1.3
  */
 
 namespace Matchday_Blocks\Blocks;
@@ -63,14 +63,18 @@ class Blocks_Manager {
 	 */
 	private function init_hooks() {
 		add_action( 'init', array( $this, 'register_blocks' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_block_styles' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_styles' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_styles' ) );
 	}
 
 	/**
-	 * Enqueue block styles for frontend
+	 * Enqueue block styles for the frontend and the block editor
+	 *
+	 * Hooked to `enqueue_block_assets` rather than `wp_enqueue_scripts` /
+	 * `enqueue_block_editor_assets` so the stylesheet is also loaded inside the
+	 * iframed editor canvas, which WordPress 7.1 uses unconditionally.
 	 *
 	 * @since 1.0.0
+	 * @version 1.1.3
 	 * @return void
 	 */
 	public function enqueue_block_styles() {
@@ -79,25 +83,6 @@ class Blocks_Manager {
 		if ( file_exists( $css_file ) ) {
 			wp_enqueue_style(
 				'matchday-blocks-styles',
-				MATCHDAY_BLOCKS_PLUGIN_URL . 'assets/css/blocks.css',
-				array(),
-				filemtime( $css_file )
-			);
-		}
-	}
-
-	/**
-	 * Enqueue block styles for editor
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function enqueue_editor_styles() {
-		$css_file = MATCHDAY_BLOCKS_PLUGIN_DIR . 'assets/css/blocks.css';
-
-		if ( file_exists( $css_file ) ) {
-			wp_enqueue_style(
-				'matchday-blocks-editor-styles',
 				MATCHDAY_BLOCKS_PLUGIN_URL . 'assets/css/blocks.css',
 				array(),
 				filemtime( $css_file )
