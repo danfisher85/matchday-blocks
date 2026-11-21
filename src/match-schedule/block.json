@@ -8,6 +8,7 @@
 	"icon": "calendar-alt",
 	"description": "Display complete match schedule from MeinTurnierplan.",
 	"keywords": ["match", "schedule", "calendar", "meinturnierplan"],
+	"textdomain": "matchday-blocks",
 	"attributes": {
 		"date": {
 			"type": "string",

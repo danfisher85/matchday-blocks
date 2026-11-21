@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.2
+ * @version 1.1.4
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -29,18 +29,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	// Check if data is valid.
 	if ( is_wp_error( $tournament_data ) ) {
-		echo '<div class="matchday-error">';
-		echo '<p>' . esc_html( $tournament_data->get_error_message() ) . '</p>';
-		echo '</div>';
+		$manager->render_message( $tournament_data->get_error_message() );
 		return;
 	}
 
 	// Show a graceful message when the tournament has standings hidden.
 	$hide_ranks = isset( $tournament_data['hideRanks'] ) ? $tournament_data['hideRanks'] : 'none';
 	if ( 'none' !== $hide_ranks ) {
-		echo '<div class="matchday-error">';
-		echo '<p>' . esc_html__( 'Standings are hidden for this tournament.', 'matchday-blocks' ) . '</p>';
-		echo '</div>';
+		$manager->render_message( __( 'Standings are hidden for this tournament.', 'matchday-blocks' ), true );
 		return;
 	}
 
@@ -49,9 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		empty( $tournament_data['participants'] ) ||
 		empty( $tournament_data['groupRankTables'] )
 	) {
-		echo '<div class="matchday-error">';
-		echo '<p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p>';
-		echo '</div>';
+		$manager->render_message( __( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) );
 		return;
 	}
 
@@ -59,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$teams = $tournament_data['participants'];
 
 	// Display standings.
-	echo '<div class="matchday-standings">';
+	echo '<div ' . wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'matchday-standings' ) ) ) . '>';
 
 	// Check if groups data exists.
 	$has_groups = ! empty( $tournament_data['groups'] );
@@ -164,7 +158,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		if ( ! empty( $final_standings ) ) {
 			echo '<div class="matchday-standings__group">';
-			echo '<h3 class="matchday-standings__group-heading">' . esc_html__( 'Final Standings', 'matchday-blocks' ) . '</h3>';
+			echo '<div class="matchday-standings__group-heading">';
+			echo '<h3 class="matchday-standings__group-title">' . esc_html__( 'Final Standings', 'matchday-blocks' ) . '</h3>';
+			echo '</div>';
 			echo '<div class="matchday-standings__table-wrapper">';
 			echo '<table>';
 			echo '<thead>';
@@ -182,7 +178,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				}
 
 				$team      = $teams[ $team_id ];
-				$team_name = $team['name'];
+				$team_name = ! empty( $team['name'] ) ? $team['name'] : '–';
 				$team_logo = isset( $team['logo']['lx95w'] ) ? $team['logo']['lx95w'] : '';
 				$rank_display = $manager->get_ordinal_suffix( $rank );
 

@@ -6,7 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
- * @version   1.1.0
+ * @version   1.1.4
  */
 
 namespace Matchday_Blocks\API;
@@ -84,12 +84,71 @@ class Tournament_Data {
 	const API_TIMEOUT = 15;
 
 	/**
+	 * Transient key for the last API error.
+	 *
+	 * While it exists, visitors are not made to wait for another API request.
+	 *
+	 * @since 1.1.4
+	 * @var string
+	 */
+	const ERROR_TRANSIENT_KEY = 'matchday_blocks_fetch_error';
+
+	/**
+	 * How long an API error is remembered (in seconds)
+	 *
+	 * @since 1.1.4
+	 * @var int
+	 */
+	const ERROR_CACHE_TIME = 5 * MINUTE_IN_SECONDS;
+
+	/**
+	 * Option key for the last successfully fetched tournament data
+	 *
+	 * Served when the API cannot be reached.
+	 *
+	 * @since 1.1.4
+	 * @var string
+	 */
+	const LAST_GOOD_OPTION = 'matchday_blocks_last_good_data';
+
+	/**
+	 * Logo sizes the blocks use, per data collection.
+	 *
+	 * Only these sizes are downloaded; all other logo URLs are dropped.
+	 *
+	 * @since 1.1.4
+	 * @var array
+	 */
+	const LOGO_SIZES = array(
+		'participants' => array( 'lx95w', 'lx160' ),
+		'groups'       => array( 'lx95' ),
+	);
+
+	/**
+	 * Maximum size of a downloaded logo (in bytes)
+	 *
+	 * @since 1.1.4
+	 * @var int
+	 */
+	const LOGO_MAX_BYTES = 2 * MB_IN_BYTES;
+
+	/**
 	 * Instance of this class
 	 *
 	 * @since 1.0.0
 	 * @var Tournament_Data|null
 	 */
 	private static $instance = null;
+
+	/**
+	 * Tournament data already loaded during the current request
+	 *
+	 * Lets several blocks on one page share a single lookup.
+	 *
+	 * @since 1.1.4
+	 * @var array|WP_Error|null
+	 */
+	private $request_data = null;
 
 	/**
 	 * Get singleton instance
@@ -134,31 +193,98 @@ class Tournament_Data {
 	 * Fetches tournament data from the MeinTurnierplan API and caches it.
 	 * Returns cached data if available and not forcing refresh.
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.4
 	 * @param bool $force_refresh Whether to force refresh the cache.
 	 * @return array|WP_Error Tournament data array or WP_Error on failure.
 	 */
 	public function get_tournament_data( $force_refresh = false ) {
+		if ( ! $force_refresh && null !== $this->request_data ) {
+			return $this->request_data;
+		}
+
+		$this->request_data = $this->load_tournament_data( $force_refresh );
+
+		return $this->request_data;
+	}
+
+	/**
+	 * Load tournament data from the cache or the API.
+	 *
+	 * When the API fails, the error is remembered for a few minutes so that
+	 * visitors are not made to wait for repeated requests, and the last
+	 * successfully fetched data is served instead.
+	 *
+	 * @since 1.1.4
+	 * @param bool $force_refresh Whether to skip the cache.
+	 * @return array|WP_Error Tournament data array or WP_Error on failure.
+	 */
+	private function load_tournament_data( $force_refresh ) {
 		$tournament_id = $this->get_tournament_id();
 
 		// Return error if no tournament ID is set.
 		if ( empty( $tournament_id ) ) {
 			return new WP_Error(
 				'no_tournament_id',
-				__( 'No tournament ID configured. Please set it in MeinTurnierplan Settings.', 'matchday-blocks' )
+				__( 'No tournament ID configured. Please set it on the Matchday settings page.', 'matchday-blocks' )
 			);
 		}
 
-		// Try to get cached data if not forcing refresh.
 		if ( ! $force_refresh ) {
 			$cached_data = $this->get_cached_data();
 			if ( false !== $cached_data ) {
 				return $cached_data;
 			}
+
+			// The API failed recently: don't try again yet.
+			$last_error = $this->get_last_error();
+			if ( false !== $last_error ) {
+				return $this->get_fallback_data( $tournament_id, new WP_Error( 'api_error', $last_error ) );
+			}
 		}
 
-		// Fetch fresh data from API.
-		return $this->fetch_from_api( $tournament_id );
+		$data = $this->fetch_from_api( $tournament_id );
+
+		if ( is_wp_error( $data ) ) {
+			set_transient( self::ERROR_TRANSIENT_KEY, $data->get_error_message(), self::ERROR_CACHE_TIME );
+			return $this->get_fallback_data( $tournament_id, $data );
+		}
+
+		delete_transient( self::ERROR_TRANSIENT_KEY );
+
+		return $data;
+	}
+
+	/**
+	 * Get the last successfully fetched data for a tournament, or the given error.
+	 *
+	 * @since 1.1.4
+	 * @param string   $tournament_id Tournament ID.
+	 * @param WP_Error $error         Error to return when there is no saved data.
+	 * @return array|WP_Error
+	 */
+	private function get_fallback_data( $tournament_id, WP_Error $error ) {
+		$last_good = get_option( self::LAST_GOOD_OPTION );
+
+		if (
+			is_array( $last_good ) &&
+			isset( $last_good['tournament_id'], $last_good['data'] ) &&
+			(string) $tournament_id === (string) $last_good['tournament_id']
+		) {
+			return $last_good['data'];
+		}
+
+		return $error;
+	}
+
+	/**
+	 * Get the message of the last API error, if it happened recently.
+	 *
+	 * @since 1.1.4
+	 * @return string|false Error message, or false if there was no recent error.
+	 */
+	public function get_last_error() {
+		return get_transient( self::ERROR_TRANSIENT_KEY );
 	}
 
 	/**
@@ -213,20 +339,26 @@ class Tournament_Data {
 		$data = json_decode( $body, true );
 
 		// Check if JSON is valid.
-		if ( JSON_ERROR_NONE !== json_last_error() ) {
+		if ( JSON_ERROR_NONE !== json_last_error() || ! is_array( $data ) ) {
 			return new WP_Error(
 				'json_error',
 				__( 'Failed to parse tournament data. Invalid JSON received.', 'matchday-blocks' )
 			);
 		}
 
-		// Download and store team logos locally to avoid exposing visitor IPs to third-party servers.
-		if ( ! empty( $data['participants'] ) ) {
-			$data['participants'] = $this->cache_team_logos( $data['participants'] );
-		}
+		// Download and store logos locally to avoid exposing visitor IPs to third-party servers.
+		$data = $this->localize_logos( $data );
 
-		// Cache the data.
+		// Cache the data, and keep a copy to fall back on if the API fails later.
 		$this->set_cached_data( $data );
+		update_option(
+			self::LAST_GOOD_OPTION,
+			array(
+				'tournament_id' => $tournament_id,
+				'data'          => $data,
+			),
+			false
+		);
 
 		return $data;
 	}
@@ -268,11 +400,15 @@ class Tournament_Data {
 	/**
 	 * Clear tournament data cache and local logo files
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.4
 	 * @return bool True if cache was cleared.
 	 */
 	public function clear_cache() {
+		$this->request_data = null;
 		$this->clear_logo_cache();
+		delete_option( self::LAST_GOOD_OPTION );
+		delete_transient( self::ERROR_TRANSIENT_KEY );
 		return delete_transient( self::TRANSIENT_KEY );
 	}
 
@@ -355,16 +491,14 @@ class Tournament_Data {
 	}
 
 	/**
-	 * Unschedule the background cache refresh cron event.
+	 * Unschedule all background cache refresh cron events.
 	 *
-	 * @since 1.1.0
+	 * @since   1.1.0
+	 * @version 1.1.4
 	 * @return void
 	 */
 	public function unschedule_cron(): void {
-		$timestamp = wp_next_scheduled( self::CRON_HOOK );
-		if ( $timestamp ) {
-			wp_unschedule_event( $timestamp, self::CRON_HOOK );
-		}
+		wp_clear_scheduled_hook( self::CRON_HOOK );
 	}
 
 	/**
@@ -393,111 +527,278 @@ class Tournament_Data {
 	}
 
 	/**
-	 * Download and store all team logos locally.
-	 * Re-downloads only if the source URL has changed since last cache.
+	 * Replace participant and group logo URLs with locally stored copies.
 	 *
-	 * @since 1.0.0
-	 * @param array $teams Teams array from API response.
-	 * @return array Teams array with logo URLs replaced by local URLs.
+	 * Only the sizes listed in LOGO_SIZES are kept. A logo that cannot be
+	 * stored locally is dropped rather than loaded from the remote server,
+	 * so visitor browsers never contact third-party servers. Logo files that
+	 * are no longer used are deleted.
+	 *
+	 * @since 1.1.4
+	 * @param array $data Tournament data from the API.
+	 * @return array Tournament data with local logo URLs.
 	 */
-	private function cache_team_logos( array $teams ): array {
-		foreach ( $teams as &$team ) {
-			if ( ! empty( $team['logo'] ) && is_array( $team['logo'] ) ) {
-				foreach ( $team['logo'] as $size => $url ) {
-					if ( ! empty( $url ) ) {
-						$filename          = 'team-' . sanitize_key( $team['displayId'] ) . '-' . sanitize_key( $size );
-						$team['logo'][ $size ] = $this->get_local_image_url( $url, $filename );
+	private function localize_logos( array $data ): array {
+		$filesystem = $this->get_filesystem();
+		$stored     = get_option( self::LOGO_HASHES_OPTION, array() );
+		$stored     = is_array( $stored ) ? $stored : array();
+		$index      = array();
+		$prefixes   = array(
+			'participants' => 'team',
+			'groups'       => 'group',
+		);
+
+		foreach ( $prefixes as $collection => $prefix ) {
+			if ( empty( $data[ $collection ] ) || ! is_array( $data[ $collection ] ) ) {
+				continue;
+			}
+
+			foreach ( $data[ $collection ] as $item_key => $item ) {
+				if ( ! is_array( $item ) || ! isset( $item['logo'] ) ) {
+					continue;
+				}
+
+				$remote_logos = is_array( $item['logo'] ) ? $item['logo'] : array();
+				$item_id      = isset( $item['displayId'] ) ? $item['displayId'] : $item_key;
+				$local_logos  = array();
+
+				foreach ( self::LOGO_SIZES[ $collection ] as $size ) {
+					if ( ! $filesystem || empty( $remote_logos[ $size ] ) || ! is_string( $remote_logos[ $size ] ) ) {
+						continue;
+					}
+
+					$base      = $prefix . '-' . sanitize_key( (string) $item_id ) . '-' . $size;
+					$local_url = $this->get_local_image_url( $filesystem, $remote_logos[ $size ], $base, $stored, $index );
+
+					if ( '' !== $local_url ) {
+						$local_logos[ $size ] = $local_url;
 					}
 				}
+
+				$data[ $collection ][ $item_key ]['logo'] = $local_logos;
 			}
 		}
-		return $teams;
+
+		update_option( self::LOGO_HASHES_OPTION, $index, false );
+
+		if ( $filesystem ) {
+			$this->prune_logo_files( $filesystem, wp_list_pluck( $index, 'file' ) );
+		}
+
+		return $data;
 	}
 
 	/**
-	 * Download a remote image and store it locally.
-	 * Returns the local URL. If URL has not changed since last download,
-	 * returns the cached local URL without re-downloading.
+	 * Get the local URL of a remote logo, downloading it if needed.
 	 *
-	 * @since 1.0.0
-	 * @param string $remote_url Remote image URL.
-	 * @param string $filename   Base filename (without extension).
-	 * @return string Local URL, or original remote URL on failure.
+	 * Re-downloads only if the source URL has changed since the last download.
+	 * If a download fails, the previous local copy is used when there is one.
+	 *
+	 * @since   1.0.0
+	 * @version 1.1.4
+	 * @param \WP_Filesystem_Base $filesystem Filesystem instance.
+	 * @param string              $remote_url Remote image URL.
+	 * @param string              $base       Base filename (without extension).
+	 * @param array               $stored     Logo index saved by the previous fetch.
+	 * @param array               $index      Logo index being built; updated in place.
+	 * @return string Local URL, or an empty string if no local copy is available.
 	 */
-	private function get_local_image_url( string $remote_url, string $filename ): string {
-		$upload_dir = wp_upload_dir();
-		$logos_dir  = $upload_dir['basedir'] . '/matchday-blocks/logos/';
-		$logos_url  = $upload_dir['baseurl'] . '/matchday-blocks/logos/';
-		$ext        = pathinfo( wp_parse_url( $remote_url, PHP_URL_PATH ), PATHINFO_EXTENSION );
-		$ext        = $ext ? $ext : 'png';
-		$safe_name  = sanitize_file_name( $filename . '.' . $ext );
-		$local_file = $logos_dir . $safe_name;
-		$local_url  = $logos_url . $safe_name;
+	private function get_local_image_url( $filesystem, string $remote_url, string $base, array $stored, array &$index ): string {
+		$logos_dir = $this->get_logos_dir();
+		$previous  = isset( $stored[ $base ]['hash'], $stored[ $base ]['file'] ) ? $stored[ $base ] : null;
+		$has_copy  = $previous && $filesystem->exists( $logos_dir . $previous['file'] );
+		$hash      = md5( $remote_url );
 
-		// Initialise WP_Filesystem early so we can use it for all file checks.
-		$filesystem = $this->get_filesystem();
-		if ( ! $filesystem ) {
-			return $remote_url;
+		// Source URL unchanged and the file is still there: nothing to download.
+		if ( $has_copy && $hash === $previous['hash'] ) {
+			$index[ $base ] = $previous;
+			return $this->get_logos_url() . $previous['file'];
 		}
 
-		// Check stored hash to detect whether the source URL has changed.
-		$url_hashes   = get_option( self::LOGO_HASHES_OPTION, array() );
-		$current_hash = md5( $remote_url );
-		$stored_hash  = isset( $url_hashes[ $filename ] ) ? $url_hashes[ $filename ] : '';
+		$file = $this->download_logo( $filesystem, $remote_url, $base );
 
-		// Skip download if file exists and source URL is unchanged.
-		if ( $filesystem->exists( $local_file ) && $current_hash === $stored_hash ) {
-			return $local_url;
+		if ( '' === $file ) {
+			if ( $has_copy ) {
+				// Keep the old hash so the download is retried on the next fetch.
+				$index[ $base ] = $previous;
+				return $this->get_logos_url() . $previous['file'];
+			}
+			return '';
 		}
 
-		// Ensure the logos directory exists.
-		wp_mkdir_p( $logos_dir );
+		$index[ $base ] = array(
+			'hash' => $hash,
+			'file' => $file,
+		);
 
-		// Download the image from the remote server.
-		$response = wp_safe_remote_get( $remote_url, array( 'timeout' => 10 ) );
+		return $this->get_logos_url() . $file;
+	}
+
+	/**
+	 * Download a logo and store it in the logos directory.
+	 *
+	 * The file is stored only if it is a JPEG, PNG, GIF or WebP image, and
+	 * its extension is taken from the image content, not from the URL.
+	 *
+	 * @since 1.1.4
+	 * @param \WP_Filesystem_Base $filesystem Filesystem instance.
+	 * @param string              $remote_url Remote image URL.
+	 * @param string              $base       Base filename (without extension).
+	 * @return string Stored file name, or an empty string on failure.
+	 */
+	private function download_logo( $filesystem, string $remote_url, string $base ): string {
+		$response = wp_safe_remote_get(
+			$remote_url,
+			array(
+				'timeout'             => 10,
+				'limit_response_size' => self::LOGO_MAX_BYTES,
+			)
+		);
+
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			return $remote_url; // Fallback to remote URL on failure.
+			return '';
 		}
 
 		$image_data = wp_remote_retrieve_body( $response );
-		$filesystem->put_contents( $local_file, $image_data, FS_CHMOD_FILE );
 
-		// Update the stored hash so we know this URL was last seen.
-		$url_hashes[ $filename ] = $current_hash;
-		update_option( self::LOGO_HASHES_OPTION, $url_hashes, false );
+		// A body that reached the size limit was cut off.
+		if ( strlen( $image_data ) >= self::LOGO_MAX_BYTES ) {
+			return '';
+		}
 
-		return $local_url;
+		$extension = $this->get_image_extension( $image_data );
+		if ( '' === $extension ) {
+			return '';
+		}
+
+		$logos_dir = $this->get_logos_dir();
+		if ( ! wp_mkdir_p( $logos_dir ) ) {
+			return '';
+		}
+
+		$file = sanitize_file_name( $base . '.' . $extension );
+		if ( ! $filesystem->put_contents( $logos_dir . $file, $image_data, FS_CHMOD_FILE ) ) {
+			return '';
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Detect the file extension of raster image data.
+	 *
+	 * @since 1.1.4
+	 * @param string $image_data Raw image data.
+	 * @return string One of jpg, png, gif or webp, or an empty string if the
+	 *                data is not one of these image types.
+	 */
+	private function get_image_extension( string $image_data ): string {
+		if ( strlen( $image_data ) < 12 ) {
+			return '';
+		}
+
+		// Check the file signature first; getimagesizefromstring() emits
+		// notices for some non-image input.
+		$signatures = array(
+			'jpg'  => "\xFF\xD8\xFF",
+			'png'  => "\x89PNG\r\n\x1A\n",
+			'gif'  => 'GIF8',
+			'webp' => 'RIFF',
+		);
+		$extension  = '';
+		foreach ( $signatures as $candidate => $signature ) {
+			if ( 0 === strpos( $image_data, $signature ) ) {
+				$extension = $candidate;
+				break;
+			}
+		}
+		if ( 'webp' === $extension && 'WEBP' !== substr( $image_data, 8, 4 ) ) {
+			$extension = '';
+		}
+		if ( '' === $extension ) {
+			return '';
+		}
+
+		// Confirm that the data really is an image of that type.
+		$mime_types = array(
+			'jpg'  => 'image/jpeg',
+			'png'  => 'image/png',
+			'gif'  => 'image/gif',
+			'webp' => 'image/webp',
+		);
+		$info       = getimagesizefromstring( $image_data );
+		if ( ! $info || ! isset( $info['mime'] ) || $mime_types[ $extension ] !== $info['mime'] ) {
+			return '';
+		}
+
+		return $extension;
+	}
+
+	/**
+	 * Delete logo files that are not in the given list.
+	 *
+	 * @since 1.1.4
+	 * @param \WP_Filesystem_Base $filesystem Filesystem instance.
+	 * @param string[]            $keep       File names to keep.
+	 * @return void
+	 */
+	private function prune_logo_files( $filesystem, array $keep ): void {
+		$logos_dir = $this->get_logos_dir();
+
+		if ( ! $filesystem->is_dir( $logos_dir ) ) {
+			return;
+		}
+
+		$files = $filesystem->dirlist( $logos_dir );
+		if ( ! $files ) {
+			return;
+		}
+
+		foreach ( $files as $file_name => $file_info ) {
+			if ( 'f' === $file_info['type'] && ! in_array( $file_name, $keep, true ) ) {
+				$filesystem->delete( $logos_dir . $file_name );
+			}
+		}
+	}
+
+	/**
+	 * Get the path of the logos directory, with a trailing slash.
+	 *
+	 * @since 1.1.4
+	 * @return string
+	 */
+	private function get_logos_dir(): string {
+		$upload_dir = wp_upload_dir();
+		return $upload_dir['basedir'] . '/matchday-blocks/logos/';
+	}
+
+	/**
+	 * Get the URL of the logos directory, with a trailing slash.
+	 *
+	 * @since 1.1.4
+	 * @return string
+	 */
+	private function get_logos_url(): string {
+		$upload_dir = wp_upload_dir();
+		return $upload_dir['baseurl'] . '/matchday-blocks/logos/';
 	}
 
 	/**
 	 * Delete all locally cached logo files and stored URL hashes.
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.4
 	 * @return void
 	 */
 	private function clear_logo_cache(): void {
 		delete_option( self::LOGO_HASHES_OPTION );
-
-		$upload_dir = wp_upload_dir();
-		$logos_dir  = $upload_dir['basedir'] . '/matchday-blocks/logos/';
-
-		if ( ! is_dir( $logos_dir ) ) {
-			return;
-		}
 
 		$filesystem = $this->get_filesystem();
 		if ( ! $filesystem ) {
 			return;
 		}
 
-		$files = $filesystem->dirlist( $logos_dir );
-		if ( $files ) {
-			foreach ( $files as $file_name => $file_info ) {
-				if ( 'f' === $file_info['type'] ) {
-					$filesystem->delete( $logos_dir . $file_name );
-				}
-			}
-		}
+		$this->prune_logo_files( $filesystem, array() );
 	}
 
 	/**

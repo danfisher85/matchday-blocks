@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.2
+ * @version 1.1.4
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -22,13 +22,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$tournament_data_handler = \Matchday_Blocks\API\Tournament_Data::get_instance();
 	$tournament_data          = $tournament_data_handler->get_tournament_data();
 
+	// Get manager instance for helper methods.
+	$manager = \Matchday_Blocks\Blocks\Blocks_Manager::get_instance();
+
 	if ( is_wp_error( $tournament_data ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html( $tournament_data->get_error_message() ) . '</p></div>';
+		$manager->render_message( $tournament_data->get_error_message() );
 		return;
 	}
 
 	if ( empty( $tournament_data['participants'] ) || empty( $tournament_data['groupMatches'] ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
+		$manager->render_message( __( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) );
 		return;
 	}
 
@@ -53,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	$finished_matches = array_slice( $finished_matches, 0, $limit );
 
-	echo '<div class="matchday-latest-matches">';
+	echo '<div ' . wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'matchday-latest-matches' ) ) ) . '>';
 
 	foreach ( $finished_matches as $match ) {
 		if ( ! isset( $match['homeParticipant'] ) || ! isset( $match['awayParticipant'] ) ) {

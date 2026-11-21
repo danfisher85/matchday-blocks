@@ -55,6 +55,21 @@
 .matchday-standings, .matchday-match-schedule, .matchday-latest-matches, .matchday-future-matches {
   margin: 0;
 }
+.matchday-error {
+  border-radius: var(--radius-3xl);
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+  --tw-border-style: solid;
+  border-style: solid;
+  border-color: var(--color-base-3);
+  padding-inline: calc(var(--spacing) * 6);
+  padding-block: calc(var(--spacing) * 4);
+  font-size: var(--text-small);
+  line-height: var(--tw-leading, var(--text-small--line-height));
+}
+.matchday-error p {
+  margin: calc(var(--spacing) * 0);
+}
 .matchday-standings {
   display: grid;
   gap: 1.875rem;
@@ -310,6 +325,16 @@
 .matchday-match-schedule__date table tbody tr:last-child td {
   border-bottom-style: var(--tw-border-style);
   border-bottom-width: 0px;
+}
+.matchday-match-schedule__date table tbody td.matchday-match-title {
+  background-color: var(--color-base-2);
+  padding-block: calc(var(--spacing) * 2);
+  text-align: left;
+  font-size: var(--text-x-small);
+  line-height: var(--tw-leading, var(--text-x-small--line-height));
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
 }
 .matchday-match-schedule__date table tbody td.matchday-table__pos {
   padding-inline-end: calc(var(--spacing) * 0);

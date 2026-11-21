@@ -3,7 +3,9 @@
  * Plugin Name: Matchday Blocks
  * Plugin URI:  https://www.meinturnierplan.de
  * Description: Display tournament tables and matches from MeinTurnierplan using blocks.
- * Version:     1.1.3
+ * Version:     1.1.4
+ * Requires at least: 6.6
+ * Requires PHP: 7.4
  * Author:      MeinTurnierplan
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -16,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('MATCHDAY_BLOCKS_VERSION', '1.1.3');
+define('MATCHDAY_BLOCKS_VERSION', '1.1.4');
 define('MATCHDAY_BLOCKS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MATCHDAY_BLOCKS_PLUGIN_URL', plugin_dir_url(__FILE__));
 

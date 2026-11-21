@@ -6,7 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
- * @version   1.1.3
+ * @version   1.1.4
  */
 
 namespace Matchday_Blocks\Blocks;
@@ -114,6 +114,51 @@ class Blocks_Manager {
 	}
 
 	/**
+	 * Output a message in place of a block.
+	 *
+	 * Error messages are meant for site editors (for example "API returned
+	 * error code: 500"), so by default they are only shown to users who can
+	 * edit posts. Visitors see nothing.
+	 *
+	 * Must be called while the block is rendering.
+	 *
+	 * @since 1.1.4
+	 * @param string $message        Message text.
+	 * @param bool   $show_to_public Whether visitors may see the message too.
+	 * @return void
+	 */
+	public function render_message( $message, $show_to_public = false ) {
+		if ( ! $show_to_public && ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+
+		echo '<div ' . wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'matchday-error' ) ) ) . '>';
+		echo '<p>' . esc_html( $message ) . '</p>';
+		echo '</div>';
+	}
+
+	/**
+	 * Format a Y-m-d date in the site language.
+	 *
+	 * @since 1.1.4
+	 * @param string $date   Date in Y-m-d format.
+	 * @param string $format PHP date format.
+	 * @return string Formatted date, or the input if it could not be parsed.
+	 */
+	public function format_date( $date, $format ) {
+		$timezone = wp_timezone();
+		$date_obj = \DateTimeImmutable::createFromFormat( '!Y-m-d', $date, $timezone );
+
+		if ( ! $date_obj ) {
+			return $date;
+		}
+
+		$formatted = wp_date( $format, $date_obj->getTimestamp(), $timezone );
+
+		return $formatted ? $formatted : $date;
+	}
+
+	/**
 	 * Get final standings from rank table
 	 *
 	 * @since   1.0.0
@@ -147,7 +192,7 @@ class Blocks_Manager {
 	 * Render match schedule table for a specific date
 	 *
 	 * @since   1.0.0
-	 * @version 1.1.0
+	 * @version 1.1.4
 	 * @param array  $matches    Matches for the date.
 	 * @param string $match_date Date of the matches.
 	 * @param array  $teams      Teams data.
@@ -155,8 +200,11 @@ class Blocks_Manager {
 	 * @return void
 	 */
 	public function render_match_schedule_table( $matches, $match_date, $teams, $groups, $round = null ) {
-		$date_obj = \DateTime::createFromFormat( 'Y-m-d', $match_date );
-		$date_heading = $date_obj ? $date_obj->format( 'l, F j, Y' ) : $match_date;
+		$date_heading = $this->format_date(
+			$match_date,
+			/* translators: Match Schedule date heading format, see https://www.php.net/manual/datetime.format.php */
+			_x( 'l, F j, Y', 'match schedule date format', 'matchday-blocks' )
+		);
 
 		// Detect if this is a final stage table by checking the first match.
 		$is_final_stage = false;

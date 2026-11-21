@@ -6,7 +6,7 @@
  *
  * @package   Matchday_Blocks
  * @since     1.0.0
- * @version   1.1.0
+ * @version   1.1.4
  */
 
 namespace Matchday_Blocks\Admin;
@@ -198,7 +198,7 @@ class Settings {
 			self::OPTION_TOURNAMENT_ID,
 			array(
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => array( $this, 'sanitize_tournament_id' ),
 				'default'           => '',
 			)
 		);
@@ -304,6 +304,41 @@ class Settings {
 	}
 
 	/**
+	 * Sanitize the tournament ID
+	 *
+	 * Accepts a numeric ID, or a MeinTurnierplan URL containing `id=<number>`.
+	 * Anything else is rejected and the previous value is kept.
+	 *
+	 * @since 1.1.4
+	 * @param mixed $value Input value.
+	 * @return string Sanitized tournament ID.
+	 */
+	public function sanitize_tournament_id( $value ) {
+		$value = trim( sanitize_text_field( (string) $value ) );
+
+		if ( '' === $value || ctype_digit( $value ) ) {
+			return $value;
+		}
+
+		// Accept a pasted tournament URL.
+		if ( preg_match( '/[?&]id=(\d+)/', $value, $matches ) ) {
+			return $matches[1];
+		}
+
+		// Only available on admin screens (not, for example, in WP-CLI).
+		if ( function_exists( 'add_settings_error' ) ) {
+			add_settings_error(
+				'matchday_blocks_messages',
+				'matchday_blocks_invalid_tournament_id',
+				__( 'The Tournament ID must be a number, for example 12345. The previous value was kept.', 'matchday-blocks' ),
+				'error'
+			);
+		}
+
+		return (string) get_option( self::OPTION_TOURNAMENT_ID, '' );
+	}
+
+	/**
 	 * Sanitize cache time value
 	 *
 	 * @since 1.0.0
@@ -363,26 +398,33 @@ class Settings {
 	}
 
 	/**
-	 * Handle settings update actions
+	 * Show a confirmation after the settings were saved
 	 *
-	 * Clears cache when settings are saved.
+	 * The cache is not cleared here: this runs on every load of the
+	 * `settings-updated` URL, including page refreshes. Changing the
+	 * tournament ID clears the cache through its `update_option_` hook.
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.4
 	 * @return void
 	 */
 	private function maybe_handle_settings_update() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['settings-updated'] ) ) {
-			// Clear cached tournament data and locally stored logo files.
-			\Matchday_Blocks\API\Tournament_Data::get_instance()->clear_cache();
-
-			add_settings_error(
-				'matchday_blocks_messages',
-				'matchday_blocks_message',
-				__( 'Settings saved. Tournament data cache has been cleared.', 'matchday-blocks' ),
-				'success'
-			);
+		if ( ! isset( $_GET['settings-updated'] ) ) {
+			return;
 		}
+
+		// Don't report success when a value was rejected.
+		if ( get_settings_errors( 'matchday_blocks_messages' ) ) {
+			return;
+		}
+
+		add_settings_error(
+			'matchday_blocks_messages',
+			'matchday_blocks_message',
+			__( 'Settings saved.', 'matchday-blocks' ),
+			'success'
+		);
 	}
 
 	/**
@@ -421,11 +463,23 @@ class Settings {
 	/**
 	 * Render cache status message
 	 *
-	 * @since 1.0.0
+	 * @since   1.0.0
+	 * @version 1.1.4
 	 * @return void
 	 */
 	private function render_cache_status() {
 		$cached_data = get_transient( self::TRANSIENT_KEY );
+		$last_error  = \Matchday_Blocks\API\Tournament_Data::get_instance()->get_last_error();
+
+		if ( false !== $last_error ) {
+			echo '<p class="matchday-blocks-status-error">' . esc_html(
+				sprintf(
+					/* translators: %s: Error message */
+					__( 'The last attempt to fetch tournament data failed: %s', 'matchday-blocks' ),
+					$last_error
+				)
+			) . '</p>';
+		}
 
 		if ( $cached_data ) {
 			echo '<p class="matchday-blocks-status-success">✓ ' . esc_html__(

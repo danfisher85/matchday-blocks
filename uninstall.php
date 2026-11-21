@@ -7,7 +7,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.1.0
- * @version 1.1.3
+ * @version 1.1.4
  */
 
 // Exit if accessed directly.
@@ -24,9 +24,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 delete_option( 'matchday_blocks_tournament_id' );
 delete_option( 'matchday_blocks_cache_time' );
 delete_option( 'matchday_blocks_logo_hashes' );
+delete_option( 'matchday_blocks_last_good_data' );
 
-// --- Transient ---
+// --- Transients ---
 delete_transient( 'matchday_blocks_tournament_data' );
+delete_transient( 'matchday_blocks_fetch_error' );
 
 // --- Cron event ---
 wp_clear_scheduled_hook( 'matchday_blocks_refresh_cache' );

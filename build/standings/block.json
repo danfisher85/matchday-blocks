@@ -13,6 +13,7 @@
     "table",
     "meinturnierplan"
   ],
+  "textdomain": "matchday-blocks",
   "attributes": {
     "group": {
       "type": "string",

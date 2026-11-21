@@ -42,6 +42,11 @@
 	@apply border-b-0;
 }
 
+/* Knockout match title row (e.g. "1st Semifinal") */
+.matchday-match-schedule__date table tbody td.matchday-match-title {
+	@apply bg-base-2 py-2 text-left text-x-small font-bold uppercase;
+}
+
 .matchday-match-schedule__date table tbody td.matchday-table__pos {
 	@apply pe-0 text-left font-bold;
 }

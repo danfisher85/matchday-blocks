@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.0
+ * @version 1.1.4
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -27,12 +27,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$manager = \Matchday_Blocks\Blocks\Blocks_Manager::get_instance();
 
 	if ( is_wp_error( $tournament_data ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html( $tournament_data->get_error_message() ) . '</p></div>';
+		$manager->render_message( $tournament_data->get_error_message() );
 		return;
 	}
 
 	if ( empty( $tournament_data['participants'] ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
+		$manager->render_message( __( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) );
 		return;
 	}
 
@@ -107,7 +107,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$date_to_round[ $round_date ] = $round_index + 1;
 	}
 
-	echo '<div class="matchday-match-schedule">';
+	echo '<div ' . wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'matchday-match-schedule' ) ) ) . '>';
 
 	$has_final_round = ! empty( $final_matches_by_date );
 

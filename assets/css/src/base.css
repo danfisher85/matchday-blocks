@@ -26,3 +26,11 @@
 .matchday-future-matches {
 	margin: 0;
 }
+
+/* Error message shown to site editors in place of a block */
+.matchday-error {
+	@apply rounded-3xl border border-solid border-base-3 px-6 py-4 text-small;
+}
+.matchday-error p {
+	@apply m-0;
+}

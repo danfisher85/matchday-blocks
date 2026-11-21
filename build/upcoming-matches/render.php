@@ -4,7 +4,7 @@
  *
  * @package Matchday_Blocks
  * @since   1.0.0
- * @version 1.1.2
+ * @version 1.1.4
  *
  * @var array $attributes Block attributes.
  * @var string $content Block content.
@@ -22,13 +22,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	$tournament_data_handler = \Matchday_Blocks\API\Tournament_Data::get_instance();
 	$tournament_data          = $tournament_data_handler->get_tournament_data();
 
+	// Get manager instance for helper methods.
+	$manager = \Matchday_Blocks\Blocks\Blocks_Manager::get_instance();
+
 	if ( is_wp_error( $tournament_data ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html( $tournament_data->get_error_message() ) . '</p></div>';
+		$manager->render_message( $tournament_data->get_error_message() );
 		return;
 	}
 
 	if ( empty( $tournament_data['participants'] ) || empty( $tournament_data['groupMatches'] ) ) {
-		echo '<div class="matchday-error"><p>' . esc_html__( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) . '</p></div>';
+		$manager->render_message( __( 'Tournament data is incomplete or invalid.', 'matchday-blocks' ) );
 		return;
 	}
 
@@ -60,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	$future_matches = array_slice( $future_matches, 0, $limit );
 
-	echo '<div class="matchday-future-matches">';
+	echo '<div ' . wp_kses_data( get_block_wrapper_attributes( array( 'class' => 'matchday-future-matches' ) ) ) . '>';
 
 	foreach ( $future_matches as $match ) {
 		if ( ! isset( $match['homeParticipant'] ) || ! isset( $match['awayParticipant'] ) ) {
@@ -75,8 +78,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$time       = substr( $date_time, 11, 5 );
 		$date       = substr( $date_time, 0, 10 );
 
-		$date_obj = \DateTime::createFromFormat( 'Y-m-d', $date );
-		$formatted_date = $date_obj ? $date_obj->format( 'F j, Y' ) : $date;
+		$formatted_date = $manager->format_date(
+			$date,
+			/* translators: Upcoming Matches date format, see https://www.php.net/manual/datetime.format.php */
+			_x( 'F j, Y', 'upcoming match date format', 'matchday-blocks' )
+		);
 
 		$team1 = isset( $teams[ $team1_id ] ) ? $teams[ $team1_id ] : null;
 		$team2 = isset( $teams[ $team2_id ] ) ? $teams[ $team2_id ] : null;

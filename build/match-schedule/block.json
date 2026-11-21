@@ -13,6 +13,7 @@
     "calendar",
     "meinturnierplan"
   ],
+  "textdomain": "matchday-blocks",
   "attributes": {
     "date": {
       "type": "string",
