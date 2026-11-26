@@ -272,7 +272,7 @@ class Settings {
 			placeholder="<?php esc_attr_e( 'Enter tournament ID', 'matchday-blocks' ); ?>"
 		/>
 		<p class="description">
-			<?php esc_html_e( 'The tournament ID from MeinTurnierplan (e.g., 12345)', 'matchday-blocks' ); ?>
+			<?php esc_html_e( 'The tournament ID from MeinTurnierplan (e.g., 1gf2qmrm0u). Find it on your tournament page under "Share on…" → "Tournament ID – Copy ID".', 'matchday-blocks' ); ?>
 		</p>
 		<?php
 	}
@@ -306,8 +306,10 @@ class Settings {
 	/**
 	 * Sanitize the tournament ID
 	 *
-	 * Accepts a numeric ID, or a MeinTurnierplan URL containing `id=<number>`.
-	 * Anything else is rejected and the previous value is kept.
+	 * Tournament IDs contain letters and digits (e.g. "1gf2qmrm0u", or
+	 * "1760346940" for older tournaments). Anything else, such as a pasted
+	 * URL, is rejected and the previous value is kept. This also keeps the ID
+	 * safe to put into the API URL unencoded.
 	 *
 	 * @since 1.1.4
 	 * @param mixed $value Input value.
@@ -316,13 +318,8 @@ class Settings {
 	public function sanitize_tournament_id( $value ) {
 		$value = trim( sanitize_text_field( (string) $value ) );
 
-		if ( '' === $value || ctype_digit( $value ) ) {
+		if ( '' === $value || preg_match( '/^[A-Za-z0-9_-]+$/', $value ) ) {
 			return $value;
-		}
-
-		// Accept a pasted tournament URL.
-		if ( preg_match( '/[?&]id=(\d+)/', $value, $matches ) ) {
-			return $matches[1];
 		}
 
 		// Only available on admin screens (not, for example, in WP-CLI).
@@ -330,7 +327,7 @@ class Settings {
 			add_settings_error(
 				'matchday_blocks_messages',
 				'matchday_blocks_invalid_tournament_id',
-				__( 'The Tournament ID must be a number, for example 12345. The previous value was kept.', 'matchday-blocks' ),
+				__( 'The Tournament ID may only contain letters and digits, for example 1gf2qmrm0u. On MeinTurnierplan, open your tournament, click "Share on…" and use "Tournament ID – Copy ID". The previous value was kept.', 'matchday-blocks' ),
 				'error'
 			);
 		}
@@ -486,6 +483,16 @@ class Settings {
 				'Tournament data is cached and ready to use.',
 				'matchday-blocks'
 			) . '</p>';
+		} else {
+			echo '<p class="matchday-blocks-status-warning">⚠ ' . esc_html__(
+				'Tournament data is not cached. It will be fetched on the first request.',
+				'matchday-blocks'
+			) . '</p>';
+		}
+
+		// Also offer the button after a failed fetch, so the admin can retry
+		// without waiting for the remembered error to expire.
+		if ( $cached_data || false !== $last_error ) {
 			echo '<p>';
 			?>
 			<button type="button" id="matchday-clear-cache-btn" class="button button-secondary">
@@ -494,11 +501,6 @@ class Settings {
 			<span id="matchday-cache-message"></span>
 			<?php
 			echo '</p>';
-		} else {
-			echo '<p class="matchday-blocks-status-warning">⚠ ' . esc_html__(
-				'Tournament data is not cached. It will be fetched on the first request.',
-				'matchday-blocks'
-			) . '</p>';
 		}
 	}
 

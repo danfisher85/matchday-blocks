@@ -402,14 +402,16 @@ class Tournament_Data {
 	 *
 	 * @since   1.0.0
 	 * @version 1.1.4
-	 * @return bool True if cache was cleared.
+	 * @return bool True if anything was cleared.
 	 */
 	public function clear_cache() {
 		$this->request_data = null;
 		$this->clear_logo_cache();
-		delete_option( self::LAST_GOOD_OPTION );
-		delete_transient( self::ERROR_TRANSIENT_KEY );
-		return delete_transient( self::TRANSIENT_KEY );
+		$had_fallback = delete_option( self::LAST_GOOD_OPTION );
+		$had_error    = delete_transient( self::ERROR_TRANSIENT_KEY );
+		$had_cache    = delete_transient( self::TRANSIENT_KEY );
+
+		return $had_cache || $had_error || $had_fallback;
 	}
 
 	/**
